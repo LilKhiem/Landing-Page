@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg: #050709;
+  --bg2: #080B10;
+  --surface: #0D1117;
+  --surface2: #111820;
+  --border: #1A2333;
+  --border2: #222E40;
+  --gold: #F0B429;
+  --gold-dim: rgba(240,180,41,0.12);
+  --gold-glow: rgba(240,180,41,0.25);
+  --cyan: #00D4FF;
+  --cyan-dim: rgba(0,212,255,0.1);
+  --green: #00E676;
+  --green-dim: rgba(0,230,118,0.1);
+  --red: #FF4444;
+  --text: #E8EDF5;
+  --text-mid: #7A8BA0;
+  --text-dim: #3A4A5C;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+@layer utilities {
+  .perspective-1000 { perspective: 1000px; }
+  .transform-style-3d { transform-style: preserve-3d; }
+  .rotate-x-15 { transform: rotateX(15deg); }
+  .rotate-y-15 { transform: rotateY(15deg); }
+}
