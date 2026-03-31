@@ -16,7 +16,7 @@ export const Referrals = () => {
   return (
     <section id="referral" className="py-24 px-10 max-w-7xl mx-auto">
       <div className="mb-16">
-        <h2 className="text-5xl font-bold tracking-tighter mb-5">Move up the waitlist.<br />Bring the community.</h2>
+        <h2 className="text-5xl font-bold tracking-tighter mb-5">Referrals</h2>
         <p className="text-[#7A8BA0] text-base leading-relaxed max-w-xl">Share your unique referral link. Every person you bring earns you rewards — and moves you closer to the front.</p>
       </div>
 
@@ -26,7 +26,7 @@ export const Referrals = () => {
           <motion.div initial={{ width: '0%' }} whileInView={{ width: '40%' }} className="h-full bg-[#00D4FF]" />
         </div>
         <div className="flex justify-between mt-4 text-[10px] font-['JetBrains_Mono'] text-[#3A4A5C] uppercase tracking-widest">
-          {tiers.map(t => <span key={t.count}>{t.count}</span>)}
+          {tiers.map(t => <span key={t.count}>{t.count} {t.count === 1 ? 'Referral' : 'Referrals'}</span>)}
         </div>
       </div>
 
@@ -39,7 +39,9 @@ export const Referrals = () => {
             onMouseLeave={() => setHovered(null)}
             className="bg-[#0D1117] p-8 rounded-xl border border-[#1A2333] relative cursor-pointer hover:border-[#00D4FF] transition-colors"
           >
-            <div className="text-4xl font-bold text-[#00D4FF] mb-4">{tier.count}</div>
+            <div className="text-4xl font-bold text-[#00D4FF] mb-4">
+              {tier.count} <span className="text-xl">{tier.count === 1 ? 'Referral' : 'Referrals'}</span>
+            </div>
             <div className="text-sm font-bold mb-2">{tier.reward}</div>
             <p className="text-xs text-[#7A8BA0]">{tier.desc}</p>
             
@@ -49,7 +51,7 @@ export const Referrals = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="absolute -top-16 left-0 bg-[#00D4FF] text-black p-4 rounded-lg text-xs font-bold w-full shadow-xl"
               >
-                Unlock {tier.reward} at {tier.count} referrals!
+                Unlock {tier.reward} at {tier.count} {tier.count === 1 ? 'Referral' : 'Referrals'}!
               </motion.div>
             )}
           </motion.div>

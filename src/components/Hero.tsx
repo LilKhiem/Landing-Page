@@ -9,9 +9,8 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => (
     </div>
 
     <h1 className="text-6xl md:text-8xl font-bold leading-[0.95] tracking-tighter mb-7">
-      <span className="text-[#7A8BA0]">Turn Your Trading Idea into</span><br />
-      <span className="text-[#00D4FF]">Certified Alpha In Just 3 Minutes</span><br />
-      <span className="text-[#7A8BA0]">Across Any Market</span>
+      <span className="text-[#7A8BA0]">From Idea to Alpha</span><br />
+      <span className="text-[#00D4FF]">In Just 3 Minutes</span>
     </h1>
 
     <p className="text-lg text-[#7A8BA0] max-w-2xl leading-relaxed mb-6">

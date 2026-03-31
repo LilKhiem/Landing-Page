@@ -5,7 +5,7 @@ export const Features = () => (
   <section id="features" className="py-24 px-10 max-w-7xl mx-auto">
     <div className="mb-16">
       <div className="font-['JetBrains_Mono'] text-[11px] tracking-[0.2em] uppercase text-[#F0B429] mb-4">Features</div>
-      <h2 className="text-5xl font-bold tracking-tighter mb-5">Everything you need.<br />Nothing you don't.</h2>
+      <h2 className="text-5xl font-bold tracking-tighter mb-5">Core Features</h2>
       <p className="text-[#7A8BA0] text-base leading-relaxed max-w-xl">Built for quant traders, algorithmic developers, and anyone who wants institutional-grade strategy validation.</p>
     </div>
 

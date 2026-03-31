@@ -36,7 +36,7 @@ export const StrategyResults = () => (
   <section id="results" className="py-24 px-10 max-w-7xl mx-auto">
     <div className="mb-16">
       <div className="font-['JetBrains_Mono'] text-[11px] tracking-[0.2em] uppercase text-[#F0B429] mb-4">Validation Results</div>
-      <h2 className="font-['Syne'] text-5xl font-extrabold tracking-tighter mb-5">Strategy Performance</h2>
+      <h2 className="font-['Syne'] text-5xl font-extrabold tracking-tighter mb-5">Performance</h2>
       <p className="text-[#7A8BA0] text-base leading-relaxed max-w-xl">Detailed backtesting metrics for your certified strategy.</p>
     </div>
 
