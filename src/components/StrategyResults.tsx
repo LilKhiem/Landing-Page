@@ -44,7 +44,7 @@ export const StrategyResults = () => (
       <KPIBox icon={TrendingUp} label="Sharpe Ratio" value="3.15" color="text-[#F0B429]" />
       <KPIBox icon={ArrowDownCircle} label="Max Drawdown" value="2.1%" color="text-[#FF4444]" />
       <KPIBox icon={Percent} label="Win Rate" value="68.4%" color="text-[#00E676]" />
-      <KPIBox icon={DollarSign} label="Total Profit" value="$2,500" color="text-[#00D4FF]" />
+      <KPIBox icon={DollarSign} label="Total Profit" value="$2,500" color="text-[#F0B429]" />
     </div>
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

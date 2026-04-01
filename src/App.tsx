@@ -9,6 +9,7 @@ import { Hero } from './components/Hero';
 import { HowItWorks } from './components/HowItWorks';
 import { ValidationEngine } from './components/ValidationEngine';
 import { Features } from './components/Features';
+import { StrategyMarketplace } from './components/StrategyMarketplace';
 import { StrategyResults } from './components/StrategyResults';
 import { ComparisonTable } from './components/ComparisonTable';
 import { Pricing } from './components/Pricing';
@@ -29,6 +30,7 @@ export default function App() {
       <HowItWorks />
       <ValidationEngine />
       <Features />
+      <StrategyMarketplace />
       <StrategyResults />
       <ComparisonTable />
       <Pricing onOpenWaitlist={() => setIsWaitlistOpen(true)} />

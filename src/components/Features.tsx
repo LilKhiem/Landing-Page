@@ -1,35 +1,106 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Cpu, Globe, Zap, Search, Database, ShieldCheck } from "lucide-react";
 
-export const Features = () => (
-  <section id="features" className="py-24 px-10 max-w-7xl mx-auto">
-    <div className="mb-16">
-      <div className="font-['JetBrains_Mono'] text-[11px] tracking-[0.2em] uppercase text-[#F0B429] mb-4">Features</div>
-      <h2 className="text-5xl font-bold tracking-tighter mb-5">Core Features</h2>
-      <p className="text-[#7A8BA0] text-base leading-relaxed max-w-xl">Built for quant traders, algorithmic developers, and anyone who wants institutional-grade strategy validation.</p>
-    </div>
+const featureGroups = [
+  {
+    id: "engine",
+    label: "Research Engine",
+    features: [
+      { icon: Search, title: "NL2S Engine", desc: "Natural Language to Strategy. Describe logic, get code." },
+      { icon: Database, title: "Evidence Ledger", desc: "Every decision logged with full mathematical proof." },
+      { icon: ShieldCheck, title: "8-Gate Synthesis", desc: "Deterministic validation that kills weak ideas." }
+    ]
+  },
+  {
+    id: "agents",
+    label: "Agentic Crew",
+    features: [
+      { icon: Cpu, title: "ATLAS Agent", desc: "Specializes in mean reversion and statistical arbitrage." },
+      { icon: Globe, title: "ECHO Agent", desc: "Analyzes cross-asset correlations and macro flows." },
+      { icon: Zap, title: "SYNTH Agent", desc: "Optimizes execution parameters and slippage models." }
+    ]
+  }
+];
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5 bg-[#1A2333] rounded-xl overflow-hidden">
-      {[
-        { tag: 'Core — P0', title: 'NL2S — Natural Language to Strategy', desc: 'The breakthrough feature. Describe your trading idea in plain English. NEXUS translates it into executable code, validates it, and delivers a certified result.', color: 'text-[#F0B429]' },
-        { tag: 'Core — P0', title: 'Continuous Validation Loop', desc: 'Every edit to your strategy triggers an automatic re-validation. Real-time health dashboard shows Green, Yellow, or Red across all 5 validation layers.', color: 'text-[#00D4FF]' },
-        { tag: 'Core — P0', title: 'Agentic Research Crew', desc: '24 AI agents working in parallel. ATLAS generates hypotheses, ECHO cross-validates, CIPHER assesses risk, SYNTHESIS enforces the constitution.', color: 'text-[#00E676]' },
-        { tag: 'Growth — P1', title: 'Strategy Marketplace', desc: 'Publish your certified strategies. Buy proven ones. Every listing comes with the full validation chain — not just metrics, but proof.', color: 'text-[#A78BFA]' },
-        { tag: 'Growth — P1', title: 'Evidence Ledger', desc: 'Every experiment, every result, every kill — logged immutably with SHA-256 fingerprints. 50,702+ records already.', color: 'text-[#F0B429]' },
-        { tag: 'Growth — P1', title: 'Collaborative Research Rooms', desc: 'Real-time collaboration on strategy research. Comment on equity curves, fork successful configurations, and build together.', color: 'text-[#00D4FF]' },
-        { tag: 'Institutional — P2', title: 'White-Label Risk OS', desc: 'Banks, hedge funds, and prop firms deploy NEXUS under their own brand. Custom risk parameters, private evidence ledgers, API access.', color: 'text-[#A78BFA]' },
-        { tag: 'Institutional — P2', title: 'Strategy Audit Service', desc: 'Submit any existing strategy — yours or one you\'re evaluating. NEXUS runs the full 5-layer certification and delivers an institutional-grade report.', color: 'text-[#00E676]' },
-      ].map((feat, i) => (
-        <motion.div 
-          key={i}
-          whileHover={{ y: -5, scale: 1.02 }}
-          className="bg-[#0D1117] p-9 relative"
-        >
-          <div className={`font-['JetBrains_Mono'] text-[10px] tracking-[0.15em] uppercase mb-4 px-2.5 py-1 rounded inline-block bg-[rgba(240,180,41,0.12)] ${feat.color}`}>{feat.tag}</div>
-          <h3 className="text-2xl font-bold tracking-tighter mb-3">{feat.title}</h3>
-          <p className="text-sm text-[#7A8BA0] leading-relaxed mb-5">{feat.desc}</p>
-        </motion.div>
-      ))}
-    </div>
-  </section>
-);
+export const Features = () => {
+  const [activeTab, setActiveTab] = useState("engine");
+
+  return (
+    <section className="py-24 px-10 bg-black">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-20">
+          <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">FEATURES</h2>
+          <h3 className="text-4xl md:text-5xl font-extrabold tracking-tighter font-['Syne'] mb-12">Built for the next <br />generation of quants.</h3>
+          
+          <div className="flex justify-center gap-4 mb-16">
+            {featureGroups.map((group) => (
+              <button
+                key={group.id}
+                onClick={() => setActiveTab(group.id)}
+                className={`px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all ${activeTab === group.id ? 'bg-[#F0B429] text-black' : 'bg-[#0A101A] text-[#4A5568] border border-[#1A2333]'}`}
+              >
+                {group.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="space-y-8">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="grid gap-6"
+              >
+                {featureGroups.find(g => g.id === activeTab)?.features.map((f, i) => (
+                  <div key={i} className="p-6 rounded-2xl border border-[#1A2333] bg-[#0A101A] group hover:border-[#F0B429]/30 transition-all">
+                    <f.icon className="w-6 h-6 text-[#F0B429] mb-4" />
+                    <h4 className="text-lg font-bold mb-2 font-['Syne']">{f.title}</h4>
+                    <p className="text-sm text-[#7A8BA0] leading-relaxed">{f.desc}</p>
+                  </div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <div className="relative aspect-square rounded-3xl border border-[#1A2333] bg-[#05080D] overflow-hidden p-12">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#F0B429]/5 to-transparent"></div>
+            
+            {/* Agentic Crew Illustration */}
+            <div className="relative h-full flex flex-col justify-center items-center">
+              <div className="w-32 h-32 rounded-full border-2 border-[#F0B429]/20 flex items-center justify-center relative">
+                <div className="absolute inset-0 rounded-full border-2 border-[#F0B429] border-t-transparent animate-spin"></div>
+                <Cpu className="w-12 h-12 text-[#F0B429]" />
+                
+                {/* Orbiting Agents */}
+                {[0, 120, 240].map((angle, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 10 + i * 2, ease: "linear" }}
+                    className="absolute inset-0"
+                    style={{ rotate: angle }}
+                  >
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-lg bg-[#0A101A] border border-[#F0B429]/30 flex items-center justify-center">
+                      <Zap className="w-4 h-4 text-[#F0B429]" />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              
+              <div className="mt-12 text-center">
+                <div className="text-[10px] font-bold text-[#F0B429] tracking-[0.3em] uppercase mb-2">AGENTIC RESEARCH CREW</div>
+                <p className="text-xs text-[#4A5568] max-w-[200px]">24 specialized AI agents working in parallel to validate your intuition.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
