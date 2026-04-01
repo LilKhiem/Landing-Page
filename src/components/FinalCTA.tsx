@@ -7,22 +7,22 @@ export const FinalCTA = ({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) =>
   const markets = ['Crypto', 'FX', 'Gold', 'Prop Firm', 'SPX Option'];
 
   return (
-    <section className="py-24 px-10 bg-[#F0B429]">
+    <section className="py-20 px-10 bg-[#F0B429]">
       <div className="max-w-4xl mx-auto text-center">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/10 border border-black/10 text-black text-[10px] font-black tracking-[0.2em] uppercase mb-8"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/10 border border-black/10 text-black text-[10px] font-black tracking-[0.2em] uppercase mb-6"
         >
           <ShieldCheck className="w-3 h-3" />
           Founding Member Access
         </motion.div>
         
-        <h2 className="text-5xl md:text-7xl font-black text-black tracking-tighter font-['Syne'] mb-8">
+        <h2 className="text-5xl md:text-8xl font-bold text-black tracking-[-0.04em] font-display mb-8 leading-[1.0]">
           The future of quant <br />is agentic.
         </h2>
         
-        <p className="text-black/70 text-xl font-medium mb-12 max-w-2xl mx-auto">
+        <p className="text-black/70 text-xl font-medium mb-10 max-w-2xl mx-auto">
           Join 12,000+ quants waiting for the next batch of invites. <br />Launch: April 5, 2026.
         </p>
 
@@ -61,7 +61,7 @@ export const FinalCTA = ({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) =>
             </div>
           </div>
           
-          <p className="mt-10 text-[10px] text-black/50 font-bold tracking-widest uppercase">
+          <p className="mt-8 text-[10px] text-black/50 font-bold tracking-widest uppercase">
             Free to join · No credit card · Instant referral link
           </p>
         </div>

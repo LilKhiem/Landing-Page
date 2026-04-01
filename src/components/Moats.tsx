@@ -2,11 +2,11 @@ import { motion } from "motion/react";
 import { Shield, Zap, Database, Lock } from "lucide-react";
 
 export const Moats = () => (
-  <section className="py-24 px-10 bg-[#05080D]">
+  <section className="py-20 px-10 bg-[#05080D]">
     <div className="max-w-6xl mx-auto">
-      <div className="mb-16 text-center">
+      <div className="mb-12 text-center">
         <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">WHY WE WIN</h2>
-        <h3 className="text-4xl md:text-5xl font-extrabold tracking-tighter font-['Syne'] mb-6">Built to be uncopyable.</h3>
+        <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-8">Built to be uncopyable.</h3>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
@@ -36,7 +36,7 @@ export const Moats = () => (
             <div className="w-12 h-12 rounded-2xl bg-[#F0B429]/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <moat.icon className="w-6 h-6 text-[#F0B429]" />
             </div>
-            <h4 className="text-xl font-bold mb-4 font-['Syne']">{moat.title}</h4>
+            <h4 className="text-2xl font-bold mb-4 font-display">{moat.title}</h4>
             <p className="text-[#7A8BA0] leading-relaxed">{moat.desc}</p>
           </div>
         ))}

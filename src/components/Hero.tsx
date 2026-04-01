@@ -67,13 +67,13 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
   }, [activeTab]);
 
   return (
-    <section className="relative pt-24 pb-20 px-10 overflow-hidden">
+    <section className="relative pt-20 pb-16 px-10 overflow-hidden">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         <div className="text-left">
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8 inline-block px-4 py-1 border border-[#F0B429]/30 bg-[#F0B429]/10 text-[#F0B429] text-[10px] font-bold tracking-[0.2em] uppercase rounded-full"
+            className="mb-6 inline-block px-4 py-1 border border-[#F0B429]/30 bg-[#F0B429]/10 text-[#F0B429] text-[10px] font-bold tracking-[0.2em] uppercase rounded-full"
           >
             LAUNCHING APRIL 5, 2026 — JOIN THE WAITLIST
           </motion.div>
@@ -82,7 +82,7 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-extrabold tracking-tighter leading-[0.9] mb-6 font-['Syne']"
+            className="text-4xl md:text-7xl font-bold tracking-[-0.04em] leading-[1.0] mb-6 font-display"
           >
             From Idea to Alpha Strategies <br />
             <span className="text-[#F0B429]">In Just 3 Minutes.</span>
@@ -92,7 +92,7 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="max-w-xl text-[#7A8BA0] text-lg mb-10 leading-relaxed"
+            className="max-w-xl text-[#7A8BA0] text-xl mb-10 leading-relaxed font-light"
           >
             The first AI platform that turns your idea into validated, deployment-ready trading strategies in any market. Describe what you want — NEXUS builds, tests, and certifies it.
           </motion.p>
@@ -201,7 +201,7 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
       </div>
 
       {/* Metrics Strip as Micro-Dashboard */}
-      <div className="w-full max-w-7xl mt-24 grid grid-cols-2 md:grid-cols-5 gap-4 border-t border-[#1A2333] pt-12">
+      <div className="w-full max-w-7xl mt-20 grid grid-cols-2 md:grid-cols-5 gap-4 border-t border-[#1A2333] pt-10">
         {[
           { label: "EXPERIMENTS VALIDATED", value: "50,817", trend: [{v:10},{v:15},{v:12},{v:18},{v:25},{v:22},{v:30}], hint: "Total unique strategies tested across all market regimes." },
           { label: "KILL RATE", value: "97%", trend: [{v:95},{v:96},{v:97},{v:97},{v:98},{v:97},{v:97}], hint: "97% of tested ideas never reach certification – by design." },
@@ -214,7 +214,7 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
             whileHover={{ y: -5 }}
             className="bg-[#0A101A] border border-[#1A2333] p-5 rounded-xl hover:border-[#F0B429]/50 transition-all group relative"
           >
-            <div className="text-[#F0B429] text-2xl font-black font-['Syne'] mb-1 tracking-tighter">{stat.value}</div>
+            <div className="text-[#F0B429] text-3xl font-bold font-display mb-1 tracking-tight">{stat.value}</div>
             <div className="text-[9px] text-[#4A5568] font-bold tracking-widest uppercase leading-tight mb-2">{stat.label}</div>
             <Sparkline data={stat.trend} />
             

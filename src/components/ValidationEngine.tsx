@@ -19,12 +19,12 @@ const layers = [
 ];
 
 export const ValidationEngine = () => (
-  <section className="py-24 px-10 bg-[#05080D]">
+  <section className="py-20 px-10 bg-[#05080D]">
     <div className="max-w-6xl mx-auto">
       <div className="grid lg:grid-cols-2 gap-16 items-center">
         <div>
           <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">VALIDATION ENGINE</h2>
-          <h3 className="text-4xl md:text-5xl font-extrabold tracking-tighter font-['Syne'] mb-8">The 5-Layer <br />Certification Stack.</h3>
+          <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-8">The 5-Layer <br />Certification Stack.</h3>
           
           <div className="space-y-4">
             {layers.map((layer, i) => (
@@ -51,7 +51,7 @@ export const ValidationEngine = () => (
         <div className="relative">
           <div className="absolute inset-0 bg-[#F0B429]/5 blur-3xl rounded-full"></div>
           <div className="relative p-8 rounded-3xl border border-[#1A2333] bg-black/40 backdrop-blur-sm">
-            <div className="mb-8 flex justify-between items-end">
+            <div className="mb-6 flex justify-between items-end">
               <div>
                 <div className="text-[10px] font-bold text-[#4A5568] uppercase tracking-widest mb-1">ROBUSTNESS SCORE</div>
                 <div className="text-3xl font-black text-[#F0B429] font-['JetBrains_Mono']">94.2/100</div>
@@ -78,7 +78,7 @@ export const ValidationEngine = () => (
               </ResponsiveContainer>
             </div>
 
-            <div className="mt-8 grid grid-cols-2 gap-4">
+            <div className="mt-6 grid grid-cols-2 gap-4">
               <div className="p-3 rounded-lg bg-[#0A101A] border border-[#1A2333]">
                 <div className="text-[9px] font-bold text-[#4A5568] uppercase mb-1">IS/OOS Ratio</div>
                 <div className="text-sm font-bold text-white">1.14</div>

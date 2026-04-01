@@ -22,19 +22,19 @@ export const Referrals = () => {
   };
 
   return (
-    <section className="py-24 px-10 bg-[#05080D]">
+    <section className="py-20 px-10 bg-[#05080D]">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">REFERRAL PROGRAM</h2>
-          <h3 className="text-4xl font-extrabold tracking-tighter font-['Syne'] mb-6">Skip the wait. <br />Earn your edge.</h3>
-          <p className="text-[#7A8BA0] text-lg">Invite other quants and unlock exclusive founding rewards.</p>
+          <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-8">Skip the wait. <br />Earn your edge.</h3>
+          <p className="text-[#7A8BA0] text-xl font-light">Invite other quants and unlock exclusive founding rewards.</p>
         </div>
 
-        <div className="bg-[#0A101A] border border-[#1A2333] rounded-3xl p-12 relative overflow-hidden">
+        <div className="bg-[#0A101A] border border-[#1A2333] rounded-3xl p-10 relative overflow-hidden">
           <div className="absolute inset-0 bg-[#F0B429]/5 blur-3xl"></div>
           
           <div className="relative z-10">
-            <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 mb-12">
+            <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 mb-10">
               <div>
                 <div className="text-[10px] font-bold text-[#4A5568] uppercase tracking-widest mb-1">YOUR REFERRALS</div>
                 <div className="text-5xl font-black text-white font-['JetBrains_Mono']">{currentReferrals}</div>
@@ -60,7 +60,7 @@ export const Referrals = () => {
             </div>
 
             {/* Progress Bar Container */}
-            <div className="relative h-4 bg-black border border-[#1A2333] rounded-full mb-24 mt-16">
+            <div className="relative h-4 bg-black border border-[#1A2333] rounded-full mb-16 mt-12">
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}

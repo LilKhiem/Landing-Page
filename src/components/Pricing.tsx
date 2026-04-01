@@ -33,11 +33,11 @@ export const Pricing = () => {
   const [isYearly, setIsYearly] = useState(true);
 
   return (
-    <section className="py-24 px-10 bg-black">
+    <section className="py-20 px-10 bg-black">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">PRICING</h2>
-          <h3 className="text-4xl md:text-5xl font-extrabold tracking-tighter font-['Syne'] mb-8">Founding member rates. <br />Locked in for life.</h3>
+          <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-10">Founding member rates. <br />Locked in for life.</h3>
           
           <div className="flex items-center justify-center gap-4">
             <span className={`text-xs font-bold tracking-widest uppercase ${!isYearly ? 'text-white' : 'text-[#4A5568]'}`}>Monthly</span>
@@ -68,15 +68,15 @@ export const Pricing = () => {
               )}
               
               <div className="mb-8">
-                <h4 className="text-xl font-bold mb-2 font-['Syne']">{plan.name}</h4>
+                <h4 className="text-2xl font-bold mb-3 font-display">{plan.name}</h4>
                 <p className="text-xs text-[#7A8BA0] mb-6">{plan.desc}</p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-black font-['Syne']">${isYearly ? plan.price.yearly : plan.price.monthly}</span>
+                  <span className="text-5xl font-bold font-display tracking-tight">${isYearly ? plan.price.yearly : plan.price.monthly}</span>
                   <span className="text-xs text-[#4A5568] font-bold uppercase tracking-widest">/ mo</span>
                 </div>
               </div>
 
-              <ul className="space-y-4 mb-10 flex-1">
+              <ul className="space-y-4 mb-8 flex-1">
                 {plan.features.map((feature, j) => (
                   <li key={j} className="flex items-start gap-3 text-sm text-[#7A8BA0]">
                     <Check className="w-4 h-4 text-[#F0B429] shrink-0 mt-0.5" />
@@ -92,7 +92,7 @@ export const Pricing = () => {
           ))}
         </div>
 
-        <div className="mt-16 text-center">
+        <div className="mt-12 text-center">
           <p className="text-[10px] text-[#4A5568] font-bold tracking-widest uppercase">
             <Zap className="w-3 h-3 inline-block mr-2 text-[#F0B429]" />
             All plans include a 14-day money-back guarantee. No questions asked.

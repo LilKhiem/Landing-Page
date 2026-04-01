@@ -27,11 +27,11 @@ export const Features = () => {
   const [activeTab, setActiveTab] = useState("engine");
 
   return (
-    <section className="py-24 px-10 bg-black">
+    <section className="py-20 px-10 bg-black">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-20">
+        <div className="text-center mb-16">
           <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">FEATURES</h2>
-          <h3 className="text-4xl md:text-5xl font-extrabold tracking-tighter font-['Syne'] mb-12">Built for the next <br />generation of quants.</h3>
+          <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-12">Built for the next <br />generation of quants.</h3>
           
           <div className="flex justify-center gap-4 mb-16">
             {featureGroups.map((group) => (
@@ -60,7 +60,7 @@ export const Features = () => {
                 {featureGroups.find(g => g.id === activeTab)?.features.map((f, i) => (
                   <div key={i} className="p-6 rounded-2xl border border-[#1A2333] bg-[#0A101A] group hover:border-[#F0B429]/30 transition-all">
                     <f.icon className="w-6 h-6 text-[#F0B429] mb-4" />
-                    <h4 className="text-lg font-bold mb-2 font-['Syne']">{f.title}</h4>
+                    <h4 className="text-xl font-bold mb-3 font-display">{f.title}</h4>
                     <p className="text-sm text-[#7A8BA0] leading-relaxed">{f.desc}</p>
                   </div>
                 ))}

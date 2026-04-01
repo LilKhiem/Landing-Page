@@ -146,15 +146,15 @@ export const StrategyMarketplace = () => {
   const sortOptions = ["Newest", "CAGR", "Sharpe", "Price (Low)", "Price (High)"];
 
   return (
-    <section className="py-24 px-10 bg-[#05080D] relative overflow-hidden">
+    <section className="py-20 px-10 bg-[#05080D] relative overflow-hidden">
       {/* Background Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[#F0B429]/5 blur-[120px] rounded-full pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-12">
           <div className="max-w-2xl">
             <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">STRATEGY MARKETPLACE</h2>
-            <h3 className="text-5xl font-extrabold tracking-tighter font-['Syne'] mb-6">Trade Alpha. <br />Monetize Intelligence.</h3>
+            <h3 className="text-5xl md:text-7xl font-bold tracking-[-0.03em] font-display mb-6">Trade Alpha. <br />Monetize Intelligence.</h3>
             <p className="text-[#7A8BA0] text-lg">The world's first decentralized marketplace for certified quantitative strategies. Buy, sell, or fork high-performance algorithms with full transparency.</p>
           </div>
           
@@ -165,7 +165,7 @@ export const StrategyMarketplace = () => {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="space-y-4 mb-12">
+        <div className="space-y-4 mb-10">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#4A5568]" />
@@ -320,7 +320,7 @@ export const StrategyMarketplace = () => {
                 </div>
               </div>
 
-              <h4 className="text-xl font-bold tracking-tight mb-1 group-hover:text-[#F0B429] transition-colors">{strategy.name}</h4>
+              <h4 className="text-xl font-bold tracking-tight mb-1 group-hover:text-[#F0B429] transition-colors font-display">{strategy.name}</h4>
               <p className="text-xs text-[#4A5568] font-bold uppercase tracking-widest mb-6">by {strategy.author}</p>
 
               <div className="grid grid-cols-3 gap-4 mb-6 py-4 border-y border-[#1A2333]">
@@ -402,7 +402,7 @@ export const StrategyMarketplace = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
                   <div>
                     <div className="flex items-center gap-3 mb-4">
-                      <h4 className="text-3xl font-black tracking-tighter font-['Syne']">{selectedStrategy.name}</h4>
+                      <h4 className="text-3xl font-bold tracking-tight font-display">{selectedStrategy.name}</h4>
                       {selectedStrategy.verified && (
                         <div className="flex items-center gap-1 px-2 py-1 bg-[#F0B429]/10 text-[#F0B429] rounded text-[10px] font-bold uppercase tracking-widest border border-[#F0B429]/20">
                           <ShieldCheck className="w-3 h-3" />

@@ -2,7 +2,7 @@ import React from 'react';
 
 export const Navbar = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => (
   <nav className="sticky top-0 left-0 right-0 z-50 px-10 py-4 flex items-center justify-between bg-black/85 backdrop-blur-lg border-b border-[#1A2333]">
-    <div className="font-['Syne'] text-xl font-extrabold tracking-tighter">
+    <div className="font-display text-2xl font-bold tracking-[-0.03em]">
       NEXUS IDE
     </div>
     <ul className="hidden md:flex gap-8 list-none text-xs tracking-widest text-[#7A8BA0] uppercase font-['JetBrains_Mono']">

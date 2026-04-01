@@ -34,8 +34,8 @@ export const WaitlistModal = ({ isOpen, onClose }: WaitlistModalProps) => {
               <button onClick={onClose} className="absolute top-4 right-4 text-[#7A8BA0] hover:text-[#F0B429] transition-colors">
                 <X size={20} />
               </button>
-              <h2 className="text-2xl font-bold mb-2 font-['Syne'] tracking-tight">Join the Waitlist</h2>
-              <p className="text-[#7A8BA0] text-sm mb-8 leading-relaxed">Get early access to NEXUS IDE. Founding Member pricing locked permanently on launch day.</p>
+              <h2 className="text-3xl font-bold mb-3 font-display tracking-tight">Join the Waitlist</h2>
+              <p className="text-[#7A8BA0] text-base mb-10 leading-relaxed font-light">Get early access to NEXUS IDE. Founding Member pricing locked permanently on launch day.</p>
               
               <form onSubmit={(e) => { e.preventDefault(); console.log('Email:', email, 'Market:', market); onClose(); }}>
                 <div className="mb-6">

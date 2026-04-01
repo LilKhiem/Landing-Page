@@ -41,15 +41,15 @@ const FlowArrow = () => (
 );
 
 export const HowItWorks = () => (
-  <section className="py-24 px-10 bg-black overflow-hidden">
+  <section className="py-20 px-10 bg-black overflow-hidden">
     <div className="max-w-6xl mx-auto text-center">
-      <div className="mb-20">
+      <div className="mb-16">
         <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">HOW IT WORKS</h2>
-        <h3 className="text-4xl md:text-5xl font-extrabold tracking-tighter font-['Syne'] mb-6">From idea to alpha in 3 steps.</h3>
+        <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-8">From idea to alpha in 3 steps.</h3>
       </div>
 
       {/* Horizontal Timeline */}
-      <div className="relative mb-32">
+      <div className="relative mb-24">
         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-[#1A2333] -translate-y-1/2"></div>
         <motion.div 
           initial={{ width: 0 }}
@@ -80,7 +80,7 @@ export const HowItWorks = () => (
                 <step.icon className="w-6 h-6 text-[#F0B429] relative z-10" />
               </div>
               <div className="max-w-[200px]">
-                <h4 className="text-lg font-bold mb-2 font-['Syne']">{step.title}</h4>
+                <h4 className="text-xl font-bold mb-3 font-display">{step.title}</h4>
                 <p className="text-sm text-[#7A8BA0] leading-relaxed">{step.desc}</p>
                 <div className="mt-2 text-[10px] font-bold text-[#F0B429] uppercase tracking-widest">{step.time}</div>
               </div>
@@ -90,7 +90,7 @@ export const HowItWorks = () => (
       </div>
 
       {/* Mini Flow Diagram */}
-      <div className="mt-20 flex flex-col items-center">
+      <div className="mt-16 flex flex-col items-center">
         <p className="text-[10px] font-bold text-[#4A5568] uppercase tracking-[0.3em] mb-8 font-['JetBrains_Mono']">THE GENERATE & KILL CYCLE</p>
         <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8">
           <FlowBox text="Prompt" active />
