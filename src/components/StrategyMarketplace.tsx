@@ -20,14 +20,16 @@ interface Strategy {
   id: string;
   name: string;
   author: string;
-  cagr: string;
-  sharpe: string;
-  drawdown: string;
+  cagr: number;
+  sharpe: number;
+  drawdown: number;
   price: string;
   revenueShare: string;
   verified: boolean;
   tags: string[];
   description: string;
+  assetClass: string;
+  riskLevel: 'Low' | 'Medium' | 'High';
 }
 
 const strategies: Strategy[] = [
@@ -35,64 +37,113 @@ const strategies: Strategy[] = [
     id: "1",
     name: "Alpha Momentum V4",
     author: "QuantLabs_X",
-    cagr: "+42.5%",
-    sharpe: "2.8",
-    drawdown: "-8.2%",
+    cagr: 42.5,
+    sharpe: 2.8,
+    drawdown: -8.2,
     price: "$499",
     revenueShare: "15%",
     verified: true,
     tags: ["Equities", "Momentum", "High Frequency"],
-    description: "A high-frequency momentum strategy targeting mid-cap tech stocks with dynamic risk adjustment."
+    description: "A high-frequency momentum strategy targeting mid-cap tech stocks with dynamic risk adjustment.",
+    assetClass: "Equities",
+    riskLevel: "High"
   },
   {
     id: "2",
     name: "Macro Volatility Arb",
     author: "DeepAlpha_Res",
-    cagr: "+28.1%",
-    sharpe: "3.1",
-    drawdown: "-4.5%",
+    cagr: 28.1,
+    sharpe: 3.1,
+    drawdown: -4.5,
     price: "$850",
     revenueShare: "20%",
     verified: true,
     tags: ["Options", "Volatility", "Market Neutral"],
-    description: "Exploits mispricing in index volatility surfaces using a proprietary mean-reversion model."
+    description: "Exploits mispricing in index volatility surfaces using a proprietary mean-reversion model.",
+    assetClass: "Options",
+    riskLevel: "Medium"
   },
   {
     id: "3",
     name: "Crypto Trend Follower",
     author: "Satoshi_Quant",
-    cagr: "+112.4%",
-    sharpe: "1.9",
-    drawdown: "-22.1%",
+    cagr: 112.4,
+    sharpe: 1.9,
+    drawdown: -22.1,
     price: "$299",
     revenueShare: "10%",
     verified: false,
     tags: ["Crypto", "Trend", "Leverage"],
-    description: "Aggressive trend-following strategy for BTC/ETH pairs with automated stop-loss triggers."
+    description: "Aggressive trend-following strategy for BTC/ETH pairs with automated stop-loss triggers.",
+    assetClass: "Crypto",
+    riskLevel: "High"
   },
   {
     id: "4",
     name: "Yield Optimizer Pro",
     author: "DeFi_Master",
-    cagr: "+18.2%",
-    sharpe: "4.2",
-    drawdown: "-1.8%",
+    cagr: 18.2,
+    sharpe: 4.2,
+    drawdown: -1.8,
     price: "$1,200",
     revenueShare: "25%",
     verified: true,
     tags: ["Stablecoins", "Yield Farming", "Low Risk"],
-    description: "Low-risk stablecoin yield optimization across multiple chains with insurance coverage."
+    description: "Low-risk stablecoin yield optimization across multiple chains with insurance coverage.",
+    assetClass: "Stablecoins",
+    riskLevel: "Low"
   }
 ];
 
 export const StrategyMarketplace = () => {
   const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState("Newest");
+  const [filters, setFilters] = useState({
+    assetClass: "All",
+    riskLevel: "All",
+    minCagr: 0,
+    minSharpe: 0,
+    maxDrawdown: 30
+  });
 
-  const filteredStrategies = strategies.filter(s => 
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const resetFilters = () => {
+    setFilters({
+      assetClass: "All",
+      riskLevel: "All",
+      minCagr: 0,
+      minSharpe: 0,
+      maxDrawdown: 30
+    });
+    setSearchQuery("");
+    setSortBy("Newest");
+  };
+
+  const filteredStrategies = strategies.filter(s => {
+    const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesAsset = filters.assetClass === "All" || s.assetClass === filters.assetClass;
+    const matchesRisk = filters.riskLevel === "All" || s.riskLevel === filters.riskLevel;
+    const matchesCagr = s.cagr >= filters.minCagr;
+    const matchesSharpe = s.sharpe >= filters.minSharpe;
+    const matchesDrawdown = Math.abs(s.drawdown) <= filters.maxDrawdown;
+
+    return matchesSearch && matchesAsset && matchesRisk && matchesCagr && matchesSharpe && matchesDrawdown;
+  });
+
+  const sortedStrategies = [...filteredStrategies].sort((a, b) => {
+    if (sortBy === "CAGR") return b.cagr - a.cagr;
+    if (sortBy === "Sharpe") return b.sharpe - a.sharpe;
+    if (sortBy === "Price (Low)") return parseFloat(a.price.replace('$', '').replace(',', '')) - parseFloat(b.price.replace('$', '').replace(',', ''));
+    if (sortBy === "Price (High)") return parseFloat(b.price.replace('$', '').replace(',', '')) - parseFloat(a.price.replace('$', '').replace(',', ''));
+    return 0;
+  });
+
+  const assetClasses = ["All", ...new Set(strategies.map(s => s.assetClass))];
+  const riskLevels = ["All", "Low", "Medium", "High"];
+  const sortOptions = ["Newest", "CAGR", "Sharpe", "Price (Low)", "Price (High)"];
 
   return (
     <section className="py-24 px-10 bg-[#05080D] relative overflow-hidden">
@@ -114,26 +165,143 @@ export const StrategyMarketplace = () => {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="flex flex-col md:flex-row gap-4 mb-12">
-          <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#4A5568]" />
-            <input 
-              type="text" 
-              placeholder="Search strategies, authors, or tags..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#0A101A] border border-[#1A2333] rounded-xl py-4 pl-12 pr-4 text-sm focus:outline-none focus:border-[#F0B429]/50 transition-colors"
-            />
+        <div className="space-y-4 mb-12">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#4A5568]" />
+              <input 
+                type="text" 
+                placeholder="Search strategies, authors, or tags..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-[#0A101A] border border-[#1A2333] rounded-xl py-4 pl-12 pr-4 text-sm focus:outline-none focus:border-[#F0B429]/50 transition-colors"
+              />
+            </div>
+            <div className="flex gap-2">
+              <div className="relative">
+                <select 
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="appearance-none bg-[#0A101A] border border-[#1A2333] rounded-xl px-6 py-4 pr-10 text-xs font-bold uppercase tracking-widest text-[#7A8BA0] focus:outline-none focus:border-[#F0B429]/30 transition-all cursor-pointer"
+                >
+                  {sortOptions.map(opt => <option key={opt} value={opt}>Sort: {opt}</option>)}
+                </select>
+                <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A5568] rotate-90 pointer-events-none" />
+              </div>
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 px-6 py-4 rounded-xl font-bold uppercase tracking-widest transition-all ${
+                  showFilters ? 'bg-[#F0B429] text-black' : 'bg-[#0A101A] border border-[#1A2333] text-[#7A8BA0] hover:text-white hover:border-[#F0B429]/30'
+                }`}
+              >
+                <Filter className="w-4 h-4" />
+                <span className="text-xs">Filters</span>
+              </button>
+            </div>
           </div>
-          <button className="flex items-center gap-2 px-6 py-4 bg-[#0A101A] border border-[#1A2333] rounded-xl text-[#7A8BA0] hover:text-white hover:border-[#F0B429]/30 transition-all">
-            <Filter className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Filters</span>
-          </button>
+
+          {/* Advanced Filters Panel */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div 
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="bg-[#0A101A] border border-[#1A2333] rounded-2xl p-8">
+                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-8">
+                    {/* Asset Class */}
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#4A5568] uppercase tracking-widest mb-3">Asset Class</label>
+                      <select 
+                        value={filters.assetClass}
+                        onChange={(e) => setFilters({...filters, assetClass: e.target.value})}
+                        className="w-full bg-black border border-[#1A2333] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-[#F0B429]/30"
+                      >
+                        {assetClasses.map(ac => <option key={ac} value={ac}>{ac}</option>)}
+                      </select>
+                    </div>
+
+                    {/* Risk Level */}
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#4A5568] uppercase tracking-widest mb-3">Risk Level</label>
+                      <select 
+                        value={filters.riskLevel}
+                        onChange={(e) => setFilters({...filters, riskLevel: e.target.value})}
+                        className="w-full bg-black border border-[#1A2333] rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-[#F0B429]/30"
+                      >
+                        {riskLevels.map(rl => <option key={rl} value={rl}>{rl}</option>)}
+                      </select>
+                    </div>
+
+                    {/* Min CAGR */}
+                    <div>
+                      <div className="flex justify-between items-center mb-3">
+                        <label className="text-[10px] font-bold text-[#4A5568] uppercase tracking-widest">Min CAGR</label>
+                        <span className="text-[10px] font-bold text-[#F0B429]">{filters.minCagr}%</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="100" 
+                        value={filters.minCagr}
+                        onChange={(e) => setFilters({...filters, minCagr: parseInt(e.target.value)})}
+                        className="w-full accent-[#F0B429] bg-[#1A2333] h-1 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+
+                    {/* Min Sharpe */}
+                    <div>
+                      <div className="flex justify-between items-center mb-3">
+                        <label className="text-[10px] font-bold text-[#4A5568] uppercase tracking-widest">Min Sharpe</label>
+                        <span className="text-[10px] font-bold text-[#F0B429]">{filters.minSharpe}</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="5" 
+                        step="0.1"
+                        value={filters.minSharpe}
+                        onChange={(e) => setFilters({...filters, minSharpe: parseFloat(e.target.value)})}
+                        className="w-full accent-[#F0B429] bg-[#1A2333] h-1 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+
+                    {/* Max Drawdown */}
+                    <div>
+                      <div className="flex justify-between items-center mb-3">
+                        <label className="text-[10px] font-bold text-[#4A5568] uppercase tracking-widest">Max Drawdown</label>
+                        <span className="text-[10px] font-bold text-[#F0B429]">{filters.maxDrawdown}%</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="50" 
+                        value={filters.maxDrawdown}
+                        onChange={(e) => setFilters({...filters, maxDrawdown: parseInt(e.target.value)})}
+                        className="w-full accent-[#F0B429] bg-[#1A2333] h-1 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <button 
+                      onClick={resetFilters}
+                      className="text-[10px] font-bold text-[#4A5568] uppercase tracking-widest hover:text-[#F0B429] transition-colors flex items-center gap-2"
+                    >
+                      Reset All Filters
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Strategy Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredStrategies.map((strategy, i) => (
+          {sortedStrategies.map((strategy, i) => (
             <motion.div 
               key={strategy.id}
               initial={{ opacity: 0, y: 20 }}
@@ -158,7 +326,7 @@ export const StrategyMarketplace = () => {
               <div className="grid grid-cols-3 gap-4 mb-6 py-4 border-y border-[#1A2333]">
                 <div>
                   <div className="text-[9px] font-bold text-[#4A5568] uppercase tracking-widest mb-1">CAGR</div>
-                  <div className="text-sm font-black text-white">{strategy.cagr}</div>
+                  <div className="text-sm font-black text-white">+{strategy.cagr}%</div>
                 </div>
                 <div>
                   <div className="text-[9px] font-bold text-[#4A5568] uppercase tracking-widest mb-1">SHARPE</div>
@@ -166,11 +334,18 @@ export const StrategyMarketplace = () => {
                 </div>
                 <div>
                   <div className="text-[9px] font-bold text-[#4A5568] uppercase tracking-widest mb-1">MDD</div>
-                  <div className="text-sm font-black text-red-500">{strategy.drawdown}</div>
+                  <div className="text-sm font-black text-red-500">{strategy.drawdown}%</div>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-2 mb-8">
+                <span className={`text-[9px] font-bold px-2 py-1 rounded uppercase tracking-widest ${
+                  strategy.riskLevel === 'Low' ? 'bg-green-500/10 text-green-500' :
+                  strategy.riskLevel === 'Medium' ? 'bg-yellow-500/10 text-yellow-500' :
+                  'bg-red-500/10 text-red-500'
+                }`}>
+                  {strategy.riskLevel} Risk
+                </span>
                 {strategy.tags.map(tag => (
                   <span key={tag} className="text-[9px] font-bold px-2 py-1 bg-black border border-[#1A2333] rounded text-[#7A8BA0] uppercase tracking-widest">
                     {tag}
@@ -246,9 +421,9 @@ export const StrategyMarketplace = () => {
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
                   {[
-                    { label: "CAGR", value: selectedStrategy.cagr, icon: TrendingUp },
+                    { label: "CAGR", value: `+${selectedStrategy.cagr}%`, icon: TrendingUp },
                     { label: "Sharpe Ratio", value: selectedStrategy.sharpe, icon: BarChart3 },
-                    { label: "Max Drawdown", value: selectedStrategy.drawdown, icon: TrendingUp },
+                    { label: "Max Drawdown", value: `${selectedStrategy.drawdown}%`, icon: TrendingUp },
                     { label: "Revenue Share", value: selectedStrategy.revenueShare, icon: Users },
                   ].map((stat, i) => (
                     <div key={i} className="p-6 bg-black/40 border border-[#1A2333] rounded-2xl">
