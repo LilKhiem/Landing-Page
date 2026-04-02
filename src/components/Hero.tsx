@@ -6,33 +6,72 @@ import { useFormValidation } from '../hooks/useFormValidation';
 
 const prompts = {
   "Mean Reversion": {
-    text: "mean reversion USDJPY, London session, Sharpe > 2, MaxDD < 2%",
+    text: "mean reversion USDJPY, London session, target Sharpe > 2, MaxDD < 3%, min 500 trades.",
     logs: [
-      "[04:21:02] ATLAS generating candidate pool (n=1,024)...",
-      "[04:21:15] ECHO dual-model validation active...",
-      "[04:21:45] Metrics: IS: 2.4 | WFA: 2.1 | OOS: 1.9 | LOYO: PASS",
-      "[04:22:10] Stress Test: 2x Costs | DSR: 0.94 | PBO: 0.08",
-      "[04:23:15] SYNTHESIS gate check: 8/8 PASSED"
+      "NEXUS Chat ›",
+      "You: Build a mean‑reversion strategy on USDJPY, London session only.",
+      "NEXUS: Got it. I’ll generate candidates, run IS/WFA/OOS and cost stress, then show you the equity & drawdown curves.",
+      "",
+      "USER_PROMPT:",
+      "\"Mean reversion USDJPY, London session, target Sharpe > 2, MaxDD < 3%, min 500 trades.\"",
+      "",
+      "AGENT_LOGS:",
+      "[ATLAS] Generating candidate hypotheses...",
+      "[ECHO] Running walk‑forward validation...",
+      "[DELTA] Stress testing x2 costs and 2020‑style crash...",
+      "[SYNTH] Aggregating gates and computing robustness score...",
+      "",
+      "VALIDATION_GATES:",
+      "IS_PASS ✓  WFA_PASS ✓  OOS_PASS ✓  COST_STRESS ✓  ROBUSTNESS 0.82",
+      "",
+      "STRATEGY_CERTIFIED ✓",
+      "REPORT: Interactive equity & drawdown charts generated. Research trail stored in Evidence Ledger."
     ]
   },
   "Momentum": {
     text: "momentum breakout BTCUSD, 1h timeframe, Volatility adjusted, WinRate > 60%",
     logs: [
-      "[10:05:12] ATLAS scanning volatility regimes...",
-      "[10:05:30] ECHO testing breakout sensitivity...",
-      "[10:06:10] Metrics: IS: 3.1 | WFA: 2.8 | OOS: 2.5 | LOYO: PASS",
-      "[10:06:45] Stress Test: Slippage 5bps | DSR: 0.96 | PBO: 0.04",
-      "[10:07:20] SYNTHESIS gate check: 8/8 PASSED"
+      "NEXUS Chat ›",
+      "You: Create a momentum breakout strategy for BTCUSD.",
+      "NEXUS: Initializing. Scanning volatility regimes and testing breakout sensitivity across multiple timeframes.",
+      "",
+      "USER_PROMPT:",
+      "\"momentum breakout BTCUSD, 1h timeframe, Volatility adjusted, WinRate > 60%\"",
+      "",
+      "AGENT_LOGS:",
+      "[ATLAS] Scanning volatility regimes...",
+      "[ECHO] Testing breakout sensitivity...",
+      "[DELTA] Stress testing slippage 5bps...",
+      "[SYNTH] Computing robustness score...",
+      "",
+      "VALIDATION_GATES:",
+      "IS_PASS ✓  WFA_PASS ✓  OOS_PASS ✓  COST_STRESS ✓  ROBUSTNESS 0.94",
+      "",
+      "STRATEGY_CERTIFIED ✓",
+      "REPORT: Interactive equity & drawdown charts generated. Research trail stored in Evidence Ledger."
     ]
   },
   "Portfolio": {
     text: "multi-asset portfolio, SPY/TLT/GLD, Risk Parity, Monthly rebalance",
     logs: [
-      "[14:10:05] ATLAS optimizing covariance matrix...",
-      "[14:10:25] ECHO running historical stress scenarios...",
-      "[14:11:15] Metrics: Sharpe: 1.8 | Sortino: 2.2 | MaxDD: 8%",
-      "[14:11:50] Stress Test: 2008/2020 Replay | PASS",
-      "[14:12:30] SYNTHESIS gate check: 8/8 PASSED"
+      "NEXUS Chat ›",
+      "You: Optimize a multi-asset portfolio with risk parity.",
+      "NEXUS: Processing. Running historical stress scenarios and optimizing covariance matrix for SPY/TLT/GLD.",
+      "",
+      "USER_PROMPT:",
+      "\"multi-asset portfolio, SPY/TLT/GLD, Risk Parity, Monthly rebalance\"",
+      "",
+      "AGENT_LOGS:",
+      "[ATLAS] Optimizing covariance matrix...",
+      "[ECHO] Running historical stress scenarios...",
+      "[DELTA] 2008/2020 Replay stress test...",
+      "[SYNTH] Aggregating gates...",
+      "",
+      "VALIDATION_GATES:",
+      "SHARPE: 1.8 | SORTINO: 2.2 | MAXDD: 8% | PASS",
+      "",
+      "STRATEGY_CERTIFIED ✓",
+      "REPORT: Interactive equity & drawdown charts generated. Research trail stored in Evidence Ledger."
     ]
   }
 };
@@ -224,16 +263,24 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
                       animate={{ opacity: 1, x: 0 }}
                       className="text-[#4A5568]"
                     >
-                      {log.includes('PASSED') || log.includes('CERTIFIED') ? (
+                      {log === "NEXUS Chat ›" ? (
+                        <span className="text-[#F0B429] font-bold">{log}</span>
+                      ) : log.startsWith("You:") ? (
+                        <span className="text-white"><span className="text-[#F0B429]">You:</span> {log.replace("You:", "")}</span>
+                      ) : log.startsWith("NEXUS:") ? (
+                        <span className="text-[#7A8BA0]"><span className="text-[#F0B429]">NEXUS:</span> {log.replace("NEXUS:", "")}</span>
+                      ) : log.includes('✓') || log.includes('PASSED') || log.includes('CERTIFIED') ? (
                         <span className="text-[#27C93F]">{log}</span>
-                      ) : log.includes('ATLAS') || log.includes('ECHO') || log.includes('SYNTHESIS') ? (
+                      ) : log.includes('[ATLAS]') || log.includes('[ECHO]') || log.includes('[DELTA]') || log.includes('[SYNTH]') ? (
                         <>
                           {log.split(' ').map((word, i) => 
-                            ['ATLAS', 'ECHO', 'SYNTHESIS'].includes(word) ? 
+                            ['[ATLAS]', '[ECHO]', '[DELTA]', '[SYNTH]'].includes(word) ? 
                             <span key={i} className="text-[#F0B429]">{word} </span> : 
                             word + ' '
                           )}
                         </>
+                      ) : log.endsWith(':') ? (
+                        <span className="text-[#F0B429] font-bold">{log}</span>
                       ) : log}
                     </motion.div>
                   ))}

@@ -1,6 +1,11 @@
-import { Search, Database, ShieldCheck, Cpu, Zap, Lock } from "lucide-react";
+import { Search, Database, ShieldCheck, Cpu, Zap, Lock, MessageSquare } from "lucide-react";
 
 const researchEngineFeatures = [
+  { 
+    icon: MessageSquare, 
+    title: "NEXUS Chat – your in‑IDE AI quant", 
+    desc: "Ask questions like ‘What breaks this strategy?’ or ‘Why did 2022 underperform?’. NEXUS answers in context, linking you directly to the relevant equity curve, gates, and reports inside the IDE." 
+  },
   { 
     icon: Search, 
     title: "NL2S Engine – from idea to audited backtest", 

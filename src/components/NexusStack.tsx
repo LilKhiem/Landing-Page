@@ -205,7 +205,7 @@ export const NexusStack = () => {
             <div className="mt-12 p-6 rounded-2xl bg-[#F0B429]/5 border border-[#F0B429]/10">
               <p className="text-[10px] text-[#F0B429] font-bold uppercase tracking-widest mb-2">System Architecture</p>
               <p className="text-xs text-[#7A8BA0] leading-relaxed italic">
-                The NEXUS Stack is engineered as a single, cohesive organism. Each layer communicates via high-speed internal protocols, eliminating the latency and security risks of multi-vendor integrations. That’s how a single idea in NEXUS Chat can become a certified strategy with live charts and a full research history — without ever leaving the IDE.
+                The NEXUS Stack is engineered as a single, cohesive organism. Each layer communicates via high-speed internal protocols, eliminating the latency and security risks of multi-vendor integrations. That’s how a single idea in NEXUS Chat can become a certified strategy with live charts and a full research history — without ever leaving the IDE. For most users, NEXUS begins as a chat window: you talk to NEXUS Chat, and the IDE, Engine, and Metrics move behind the scenes to produce code, backtests, and reports.
               </p>
             </div>
           </div>

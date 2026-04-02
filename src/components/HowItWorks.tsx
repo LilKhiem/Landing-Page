@@ -17,10 +17,10 @@ const pipelineSteps = [
   {
     id: "input",
     title: "01. Strategy Intent",
-    desc: "Input your logic in plain English. No syntax, just intent.",
+    desc: "Start in NEXUS Chat or directly in the IDE. Describe your strategy in plain English — asset, session, style, risk — and NEXUS takes it from there.",
     icon: PenTool,
     color: "#F0B429",
-    details: ["Multi-asset support", "Custom indicators", "Risk parameters"]
+    details: ["NEXUS Chat input for natural‑language strategy ideas.", "Multi-asset support", "Custom indicators", "Risk parameters"]
   },
   {
     id: "synthesis",

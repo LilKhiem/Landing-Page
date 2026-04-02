@@ -35,6 +35,7 @@ const KPIBox = ({ icon: Icon, label, value, color }: { icon: any, label: string,
 export const StrategyResults = () => (
   <section id="results" className="py-20 px-10 max-w-7xl mx-auto">
     <div className="mb-12">
+      <div className="text-[10px] font-bold text-[#F0B429] uppercase tracking-widest mb-6">This entire block – performance table, equity curve, and drawdown chart – is the answer NEXUS generates when you ask a single question in NEXUS Chat.</div>
       <div className="font-['JetBrains_Mono'] text-[11px] tracking-[0.2em] uppercase text-[#F0B429] mb-4">Validation Results</div>
       <h2 className="font-display text-5xl md:text-7xl font-bold tracking-[-0.03em] mb-4">Performance</h2>
       <p className="text-[#7A8BA0] text-base leading-relaxed max-w-xl">Detailed backtesting metrics for your certified strategy.</p>
