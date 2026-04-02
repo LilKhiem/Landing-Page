@@ -98,7 +98,7 @@ export const NexusStack = () => {
           <p className="text-[10px] font-bold text-[#F0B429] tracking-[0.3em] uppercase mb-4 font-['JetBrains_Mono']">
             Everything in one unified system – no third‑party logos, just NEXUS.
           </p>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-[-0.03em] font-display mb-4">The NEXUS Stack.</h2>
+          <h2 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-4">The NEXUS Stack.</h2>
           <p className="text-[#7A8BA0] text-lg font-light max-w-3xl mb-6">
             The NEXUS Stack is a single, unified system — IDE, engine, DevOps, and credits — so a single idea can become a certified strategy with live charts and a full research history without ever leaving NEXUS.
           </p>

@@ -42,7 +42,7 @@ export const Features = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
           <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">FEATURES</h2>
-          <h3 className="text-4xl md:text-5xl font-bold tracking-[-0.03em] font-display mb-6">Built for the next generation of quants</h3>
+          <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-6">Built for the next generation of quants</h3>
           <p className="text-[#7A8BA0] font-['JetBrains_Mono'] text-sm max-w-3xl mx-auto">
             For people who care about IS/OOS, WFA, DSR, and PBO — not AI buzzwords.
           </p>
