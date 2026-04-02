@@ -95,8 +95,21 @@ const strategies: Strategy[] = [
   }
 ];
 
+import { trackCTA } from '../lib/analytics';
+import { BetaModal } from './BetaModal';
+
 export const StrategyMarketplace = () => {
   const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
+  const [isBetaModalOpen, setIsBetaModalOpen] = useState(false);
+  const [betaModalTitle, setBetaModalTitle] = useState("");
+  const [betaSource, setBetaSource] = useState("");
+
+  const handleBetaAction = (title: string, source: string) => {
+    setBetaModalTitle(title);
+    setBetaSource(source);
+    setIsBetaModalOpen(true);
+    trackCTA(source as any);
+  };
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState("Newest");
@@ -146,7 +159,7 @@ export const StrategyMarketplace = () => {
   const sortOptions = ["Newest", "CAGR", "Sharpe", "Price (Low)", "Price (High)"];
 
   return (
-    <section className="py-20 px-10 bg-[#05080D] relative overflow-hidden">
+    <section id="marketplace" className="py-20 px-10 bg-[#05080D] relative overflow-hidden">
       {/* Background Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[#F0B429]/5 blur-[120px] rounded-full pointer-events-none"></div>
 
@@ -155,10 +168,14 @@ export const StrategyMarketplace = () => {
           <div className="max-w-2xl">
             <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">STRATEGY MARKETPLACE</h2>
             <h3 className="text-5xl md:text-7xl font-bold tracking-[-0.03em] font-display mb-6">Trade Alpha. <br />Monetize Intelligence.</h3>
-            <p className="text-[#7A8BA0] text-lg">The world's first decentralized marketplace for certified quantitative strategies. Buy, sell, or fork high-performance algorithms with full transparency.</p>
+            <p className="text-[#7A8BA0] text-lg mb-4">The world's first decentralized marketplace for certified quantitative strategies. Buy, sell, or fork high-performance algorithms with full transparency.</p>
+            <p className="text-[#F0B429] text-sm font-bold uppercase tracking-widest">Every listing is backed by a NEXUS report: equity curve, robustness score, and a verifiable research trail.</p>
           </div>
           
-          <button className="flex items-center gap-2 px-8 py-4 bg-[#F0B429] text-black rounded-xl font-black text-xs tracking-widest uppercase hover:shadow-[0_0_30px_rgba(240,180,41,0.4)] transition-all duration-300 group">
+          <button 
+            onClick={() => handleBetaAction("NEXUS Marketplace publishing is in private beta.", "marketplace_publish")}
+            className="flex items-center gap-2 px-8 py-4 bg-[#F0B429] text-black rounded-xl font-black text-xs tracking-widest uppercase hover:shadow-[0_0_30px_rgba(240,180,41,0.4)] transition-all duration-300 group"
+          >
             <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
             Publish Strategy
           </button>
@@ -365,11 +382,17 @@ export const StrategyMarketplace = () => {
                 </div>
                 
                 <div className="grid grid-cols-2 gap-2">
-                  <button className="flex items-center justify-center gap-2 py-3 bg-[#F0B429] text-black rounded-lg font-black text-[10px] tracking-widest uppercase hover:scale-[1.02] transition-all">
+                  <button 
+                    onClick={() => handleBetaAction("NEXUS Marketplace purchasing is in private beta.", "marketplace_buy")}
+                    className="flex items-center justify-center gap-2 py-3 bg-[#F0B429] text-black rounded-lg font-black text-[10px] tracking-widest uppercase hover:scale-[1.02] transition-all"
+                  >
                     <ShoppingCart className="w-3 h-3" />
                     Buy
                   </button>
-                  <button className="flex items-center justify-center gap-2 py-3 bg-[#1A2333] text-white rounded-lg font-black text-[10px] tracking-widest uppercase hover:bg-[#2A3343] transition-all">
+                  <button 
+                    onClick={() => handleBetaAction("NEXUS Marketplace forking is in private beta.", "marketplace_fork")}
+                    className="flex items-center justify-center gap-2 py-3 bg-[#1A2333] text-white rounded-lg font-black text-[10px] tracking-widest uppercase hover:bg-[#2A3343] transition-all"
+                  >
                     <GitFork className="w-3 h-3" />
                     Fork
                   </button>
@@ -479,6 +502,12 @@ export const StrategyMarketplace = () => {
           </div>
         )}
       </AnimatePresence>
+      <BetaModal 
+        isOpen={isBetaModalOpen} 
+        onClose={() => setIsBetaModalOpen(false)} 
+        title={betaModalTitle}
+        source={betaSource}
+      />
     </section>
   );
 };

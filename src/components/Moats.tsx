@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { Shield, Zap, Database, Lock } from "lucide-react";
 
 export const Moats = () => (
-  <section className="py-20 px-10 bg-[#05080D]">
+  <section id="moats" className="py-20 px-10 bg-[#05080D]">
     <div className="max-w-6xl mx-auto">
       <div className="mb-12 text-center">
         <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">WHY WE WIN</h2>

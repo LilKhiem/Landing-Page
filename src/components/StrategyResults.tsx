@@ -49,6 +49,7 @@ export const StrategyResults = () => (
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="bg-[#0D1117] border border-[#1A2333] p-8 rounded-xl">
+        <div className="text-[9px] font-bold text-[#F0B429] uppercase tracking-widest mb-2">Generated automatically from your last NEXUS run.</div>
         <h3 className="font-display text-2xl font-bold mb-6">Equity Curve</h3>
         <div className="h-48 md:h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -111,6 +112,7 @@ export const StrategyResults = () => (
             </AreaChart>
           </ResponsiveContainer>
         </div>
+        <p className="text-[10px] text-[#4A5568] mt-4 italic">Both charts update every time you tweak your idea and re‑run the lab. They are the visual output of the entire 8-gate validation stack.</p>
       </div>
     </div>
   </section>

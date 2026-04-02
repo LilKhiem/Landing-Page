@@ -6,7 +6,7 @@ const plans = [
   {
     name: "Explorer",
     price: { monthly: 0, yearly: 0 },
-    desc: "For individual researchers testing the waters.",
+    desc: "For individual researchers.",
     features: ["5 strategy generations / mo", "Basic IS/OOS validation", "Community access", "Standard compute"],
     cta: "Start for Free",
     popular: false
@@ -14,26 +14,46 @@ const plans = [
   {
     name: "Pro",
     price: { monthly: 99, yearly: 79 },
-    desc: "For serious quants building a portfolio.",
-    features: ["Unlimited generations", "Full 8-gate certification", "Evidence Ledger access", "Priority GPU compute", "Strategy forking"],
+    desc: "For serious quants.",
+    features: ["Unlimited generations", "Full 8-gate certification", "Evidence Ledger access", "Priority GPU compute", "Full NEXUS Metrics dashboard"],
     cta: "Get Started",
     popular: true
   },
   {
     name: "Institutional",
     price: { monthly: 499, yearly: 399 },
-    desc: "For funds and professional trading desks.",
-    features: ["White-label Risk OS", "Private ledger instance", "API access", "Dedicated support", "Custom risk gates"],
+    desc: "For funds and professional desks.",
+    features: ["Unlimited generations", "White-label Risk OS", "Private ledger instance", "NEXUS Keys & CLI", "Custom risk gates"],
     cta: "Contact Sales",
     popular: false
   }
 ];
 
-export const Pricing = () => {
+import { trackCTA } from '../lib/analytics';
+import { signup } from '../lib/api';
+import { toast } from 'sonner';
+
+export const Pricing = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
   const [isYearly, setIsYearly] = useState(true);
 
+  const handlePlanClick = async (plan: typeof plans[0]) => {
+    const ctaId = plan.name === 'Explorer' ? 'pricing_explorer_start' : 
+                  plan.name === 'Pro' ? 'pricing_pro_get_started' : 
+                  'pricing_institutional_contact';
+    
+    trackCTA(ctaId as any, { plan: plan.name, isYearly });
+
+    if (plan.name === 'Institutional') {
+      onOpenWaitlist(); // Open modal for contact
+      return;
+    }
+
+    // For Explorer and Pro, we can either open waitlist or mock a direct signup
+    onOpenWaitlist();
+  };
+
   return (
-    <section className="py-20 px-10 bg-black">
+    <section id="pricing" className="py-20 px-10 bg-black">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">PRICING</h2>
@@ -85,7 +105,10 @@ export const Pricing = () => {
                 ))}
               </ul>
 
-              <button className={`w-full py-4 rounded-xl text-xs font-black tracking-widest uppercase transition-all ${plan.popular ? 'bg-[#F0B429] text-black hover:shadow-[0_0_20px_rgba(240,180,41,0.4)]' : 'bg-white text-black hover:bg-[#F0B429]'}`}>
+              <button 
+                onClick={() => handlePlanClick(plan)}
+                className={`w-full py-4 rounded-xl text-xs font-black tracking-widest uppercase transition-all ${plan.popular ? 'bg-[#F0B429] text-black hover:shadow-[0_0_20px_rgba(240,180,41,0.4)]' : 'bg-white text-black hover:bg-[#F0B429]'}`}
+              >
                 {plan.cta}
               </button>
             </motion.div>
@@ -98,6 +121,47 @@ export const Pricing = () => {
             All plans include a 14-day money-back guarantee. No questions asked.
           </p>
         </div>
+
+        {/* Teaser Block */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-24 p-10 rounded-3xl border border-[#1A2333] bg-[#0A101A] relative overflow-hidden group"
+        >
+          <div className="absolute top-0 right-0 p-4">
+            <span className="px-3 py-1 rounded-full bg-[#F0B429]/10 border border-[#F0B429]/30 text-[#F0B429] text-[9px] font-bold tracking-widest uppercase">Coming Soon</span>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h4 className="text-2xl font-bold mb-4 font-display">NEXUS Credits & Token Economy</h4>
+              <p className="text-[#7A8BA0] text-sm leading-relaxed mb-6">
+                We're building a unified economy to power the next generation of decentralized quant research.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  { title: "NEXUS Credits", desc: "Unified meter for AI, backtests, and research." },
+                  { title: "NEXUS Token", desc: "Internal governance + power‑user perks." },
+                  { title: "NEXUS Hub", desc: "Central dashboard for usage, billing, and team limits." }
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#F0B429] mt-1.5 shrink-0" />
+                    <span className="text-[#E8EDF5] font-bold">{item.title}</span>
+                    <span className="text-[#4A5568]"> – {item.desc}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="relative aspect-video rounded-2xl bg-black border border-[#1A2333] flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#F0B429]/5 to-transparent"></div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-[#F0B429] mb-2 font-display">$NXS</div>
+                <div className="text-[10px] text-[#4A5568] font-bold tracking-[0.3em] uppercase">Genesis Mint Q3 2026</div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -17,7 +17,7 @@ const StatusIcon = ({ status }: { status: boolean | string }) => {
 };
 
 export const ComparisonTable = () => (
-  <section className="py-20 px-10 bg-[#05080D]">
+  <section id="comparison" className="py-20 px-10 bg-[#05080D]">
     <div className="max-w-5xl mx-auto">
       <div className="text-center mb-12">
         <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">COMPARISON</h2>

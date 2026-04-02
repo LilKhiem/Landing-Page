@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from "recharts";
-import { Shield, Zap, BarChart3, Activity, Lock } from "lucide-react";
+import { Shield, Zap, BarChart3, Activity, Lock, Globe, ShieldAlert, Cpu } from "lucide-react";
 
 const radarData = [
   { subject: 'Sharpe', A: 120, fullMark: 150 },
@@ -11,11 +11,14 @@ const radarData = [
 ];
 
 const layers = [
-  { title: "IS/OOS Validation", icon: BarChart3, desc: "In-sample and Out-of-sample consistency check." },
-  { title: "Walk-Forward Analysis", icon: Activity, desc: "Dynamic parameter optimization across time windows." },
-  { title: "Monte Carlo Stress", icon: Zap, desc: "10,000+ randomized trade sequence simulations." },
-  { title: "Cost Sensitivity", icon: Shield, desc: "2x slippage and commission impact testing." },
-  { title: "Synthesis Gate", icon: Lock, desc: "Final deterministic certification for deployment." },
+  { title: "01. IS/OOS Consistency", icon: BarChart3, desc: "Ensures strategy logic holds across unseen data sets." },
+  { title: "02. Walk-Forward Stability", icon: Activity, desc: "Parameter optimization across rolling time windows." },
+  { title: "03. Monte Carlo (10k)", icon: Zap, desc: "10,000+ randomized trade sequence simulations." },
+  { title: "04. Cost Sensitivity", icon: Shield, desc: "Stress testing against extreme slippage and commissions." },
+  { title: "05. Regime Robustness", icon: Globe, desc: "Validation across Bull, Bear, and Sideways regimes." },
+  { title: "06. Black Swan Stress", icon: ShieldAlert, desc: "Simulated performance during tail-risk events (e.g. 2020, FTX)." },
+  { title: "07. Parameter Sensitivity", icon: Cpu, desc: "Ensures alpha isn't dependent on 'lucky' input values." },
+  { title: "08. Synthesis Gate", icon: Lock, desc: "Final deterministic certification and SHA-256 hashing, so NEXUS can learn from both your winners and your failed ideas over time." },
 ];
 
 export const ValidationEngine = () => (
@@ -24,7 +27,7 @@ export const ValidationEngine = () => (
       <div className="grid lg:grid-cols-2 gap-16 items-center">
         <div>
           <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">VALIDATION ENGINE</h2>
-          <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-8">The 5-Layer <br />Certification Stack.</h3>
+          <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-8">The Multi-Layer <br />Certification Stack.</h3>
           
           <div className="space-y-4">
             {layers.map((layer, i) => (
@@ -55,6 +58,7 @@ export const ValidationEngine = () => (
               <div>
                 <div className="text-[10px] font-bold text-[#4A5568] uppercase tracking-widest mb-1">ROBUSTNESS SCORE</div>
                 <div className="text-3xl font-black text-[#F0B429] font-['JetBrains_Mono']">94.2/100</div>
+                <p className="text-[9px] text-[#4A5568] mt-2 leading-tight">This score powers the equity and drawdown charts you see for every strategy — they’re not just pretty graphs, they visualize the entire validation stack.</p>
               </div>
               <div className="text-right">
                 <div className="text-[10px] font-bold text-green-500 uppercase tracking-widest mb-1">STATUS</div>
