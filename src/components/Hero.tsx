@@ -95,7 +95,7 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
   const [displayedLogs, setDisplayedLogs] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { email, emailError, handleEmailChange, handleSubmit } = useFormValidation();
+  const { email, emailError, handleEmailChange, handleSubmit, resetForm } = useFormValidation();
 
   useEffect(() => {
     setDisplayedLogs([]);
@@ -122,7 +122,7 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
         await signup({ email: validEmail, source: 'hero', plan_intent: 'waitlist' });
         toast.success('You’re in. Check your email for your invite link.');
         setTimeout(() => {
-          window.location.href = `/referral?ref=ALPHA_QUANT`;
+          resetForm();
         }, 1500);
       } catch (error) {
         toast.error('Something went wrong. Please try again.');

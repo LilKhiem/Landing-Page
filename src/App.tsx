@@ -42,7 +42,6 @@ export default function App() {
       <ComparisonTable />
       <PerformanceBenchmarks />
       <Pricing onOpenWaitlist={() => setIsWaitlistOpen(true)} />
-      <TokenEconomy />
       <Referrals />
       <FinalCTA onOpenWaitlist={() => setIsWaitlistOpen(true)} />
       <Footer onOpenWaitlist={() => setIsWaitlistOpen(true)} />

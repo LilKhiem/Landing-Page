@@ -13,7 +13,7 @@ import { signup } from '../lib/api';
 import { toast } from 'sonner';
 
 export const WaitlistModal = ({ isOpen, onClose }: WaitlistModalProps) => {
-  const { email, emailError, handleEmailChange, handleSubmit, isSubmitted } = useFormValidation();
+  const { email, emailError, handleEmailChange, handleSubmit, isSubmitted, resetForm } = useFormValidation();
   const [market, setMarket] = useState<string>('');
   const [marketError, setMarketError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -32,11 +32,12 @@ export const WaitlistModal = ({ isOpen, onClose }: WaitlistModalProps) => {
       setLoading(true);
       try {
         trackCTA('navbar_join_waitlist', { email: validEmail, market });
-        await signup({ email: validEmail, source: 'modal', plan_intent: 'waitlist' });
+        await signup({ email: validEmail, source: 'modal', plan_intent: 'waitlist', market });
         toast.success('You’re in. Check your email for your invite link.');
         setTimeout(() => {
+          resetForm();
+          setMarket('');
           onClose();
-          window.location.href = `/referral?ref=ALPHA_QUANT`;
         }, 1500);
       } catch (error) {
         toast.error('Something went wrong. Please try again.');

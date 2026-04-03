@@ -11,7 +11,7 @@ export const FinalCTA = ({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) =>
   const [market, setMarket] = useState<string>('');
   const [marketError, setMarketError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { email, emailError, handleEmailChange, handleSubmit } = useFormValidation();
+  const { email, emailError, handleEmailChange, handleSubmit, resetForm } = useFormValidation();
   const markets = ['Crypto', 'FX', 'Gold', 'Prop Firm', 'SPX Option'];
 
   const onFormSubmit = async (e: React.FormEvent) => {
@@ -29,7 +29,8 @@ export const FinalCTA = ({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) =>
         await signup({ email: validEmail, source: 'footer_waitlist', plan_intent: 'waitlist' });
         toast.success('You’re in. Check your email for your invite link.');
         setTimeout(() => {
-          window.location.href = `/referral?ref=ALPHA_QUANT`;
+          resetForm();
+          setMarket('');
         }, 1500);
       } catch (error) {
         toast.error('Something went wrong. Please try again.');

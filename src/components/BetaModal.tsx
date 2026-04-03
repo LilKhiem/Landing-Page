@@ -28,8 +28,9 @@ export const BetaModal = ({ isOpen, onClose, title = "NEXUS Marketplace and live
       setSuccess(true);
       toast.success('You’re in. Check your email for your invite link.');
       setTimeout(() => {
+        setEmail('');
+        setSuccess(false);
         onClose();
-        window.location.href = `/referral?ref=ALPHA_QUANT`; // Mock referral redirect
       }, 2000);
     } catch (error) {
       toast.error('Something went wrong. Please try again.');
