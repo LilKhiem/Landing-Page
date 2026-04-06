@@ -90,12 +90,12 @@ import { trackCTA } from '../lib/analytics';
 import { signup } from '../lib/api';
 import { toast } from 'sonner';
 
-export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
+export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () => void, onOpenCheckout: () => void }) => {
   const [activeTab, setActiveTab] = useState<keyof typeof prompts>("Mean Reversion");
   const [displayedLogs, setDisplayedLogs] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { email, emailError, handleEmailChange, handleSubmit, resetForm } = useFormValidation();
+  const { email, emailError, handleEmailChange, handleSubmit } = useFormValidation();
 
   useEffect(() => {
     setDisplayedLogs([]);
@@ -122,7 +122,7 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
         await signup({ email: validEmail, source: 'hero', plan_intent: 'waitlist' });
         toast.success('You’re in. Check your email for your invite link.');
         setTimeout(() => {
-          resetForm();
+          window.location.href = `/referral?ref=ALPHA_QUANT`;
         }, 1500);
       } catch (error) {
         toast.error('Something went wrong. Please try again.');
@@ -187,7 +187,7 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
                   disabled={loading}
                   className="bg-[#F0B429] text-black px-6 py-3 rounded-md font-bold text-sm hover:opacity-90 transition-opacity active:scale-[0.98] flex items-center justify-center min-w-[160px]"
                 >
-                  {loading ? 'Joining...' : 'Get Early Access →'}
+                  {loading ? 'Joining...' : 'Join Waitlist →'}
                 </button>
                 
                 <AnimatePresence>
@@ -213,9 +213,20 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
                 </AnimatePresence>
               </div>
             </form>
-            <p className="text-[11px] text-[#4A5568] font-['JetBrains_Mono'] uppercase tracking-widest mt-4">
-              Free to join · No credit card · Launch: April 5, 2026
-            </p>
+            <div className="flex items-center gap-4 mt-4">
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  onOpenCheckout();
+                }}
+                className="lemonsqueezy-button bg-transparent border border-[#1A2333] text-white px-6 py-2 rounded-md font-bold text-sm hover:border-[#F0B429] transition-colors active:scale-[0.98] flex items-center justify-center whitespace-nowrap"
+              >
+                Pre-order Pro
+              </button>
+              <p className="text-[11px] text-[#4A5568] font-['JetBrains_Mono'] uppercase tracking-widest leading-tight">
+                Free to join waitlist · Launch: April 5, 2026
+              </p>
+            </div>
           </motion.div>
         </div>
 
@@ -258,7 +269,7 @@ export const Hero = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
                 <AnimatePresence mode="popLayout">
                   {displayedLogs.map((log, idx) => (
                     <motion.div 
-                      key={log}
+                      key={idx}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       className="text-[#4A5568]"
