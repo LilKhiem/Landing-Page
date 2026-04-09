@@ -10,9 +10,12 @@ export const Navbar = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
 
   return (
     <nav className="sticky top-0 left-0 right-0 z-50 px-10 py-4 flex items-center justify-between bg-black/85 backdrop-blur-lg border-b border-[#1A2333]">
-      <div className="font-display text-2xl font-bold tracking-[-0.03em]">
+      <button 
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="font-display text-2xl font-bold tracking-[-0.03em] text-white hover:opacity-80 transition cursor-pointer"
+      >
         NEXUS IDE
-      </div>
+      </button>
       <ul className="hidden md:flex gap-8 list-none text-xs tracking-widest text-[#7A8BA0] uppercase font-['JetBrains_Mono']">
         <li><a href="#how" className="hover:text-white transition">How it Works</a></li>
         <li><a href="#features" className="hover:text-white transition">Features</a></li>

@@ -16,6 +16,7 @@ export const signup = async (payload: SignupPayload) => {
 
   const messageParts = [];
   if (payload.market) messageParts.push(`Market: ${payload.market}`);
+  if (payload.plan_intent && payload.plan_intent !== 'waitlist') messageParts.push(`Plan: ${payload.plan_intent}`);
   const combinedUtm = { ...utmParams, ...payload.utm };
   if (Object.keys(combinedUtm).length > 0) messageParts.push(`UTM: ${JSON.stringify(combinedUtm)}`);
 

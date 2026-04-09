@@ -33,7 +33,7 @@ import { trackCTA } from '../lib/analytics';
 import { signup } from '../lib/api';
 import { toast } from 'sonner';
 
-export const Pricing = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
+export const Pricing = ({ onOpenWaitlist }: { onOpenWaitlist: (plan?: string) => void }) => {
   const [isYearly, setIsYearly] = useState(true);
 
   const handlePlanClick = async (plan: typeof plans[0]) => {
@@ -44,12 +44,12 @@ export const Pricing = ({ onOpenWaitlist }: { onOpenWaitlist: () => void }) => {
     trackCTA(ctaId as any, { plan: plan.name, isYearly });
 
     if (plan.name === 'Institutional') {
-      onOpenWaitlist(); // Open modal for contact
+      onOpenWaitlist(plan.name); // Open modal for contact
       return;
     }
 
     // For Explorer and Pro, we can either open waitlist or mock a direct signup
-    onOpenWaitlist();
+    onOpenWaitlist(plan.name);
   };
 
   return (

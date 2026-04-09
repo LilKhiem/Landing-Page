@@ -6,13 +6,14 @@ import { useFormValidation } from '../hooks/useFormValidation';
 interface WaitlistModalProps {
   isOpen: boolean;
   onClose: () => void;
+  planName?: string;
 }
 
 import { trackCTA } from '../lib/analytics';
 import { signup } from '../lib/api';
 import { toast } from 'sonner';
 
-export const WaitlistModal = ({ isOpen, onClose }: WaitlistModalProps) => {
+export const WaitlistModal = ({ isOpen, onClose, planName }: WaitlistModalProps) => {
   const { email, emailError, handleEmailChange, handleSubmit, isSubmitted, resetForm } = useFormValidation();
   const [market, setMarket] = useState<string>('');
   const [marketError, setMarketError] = useState<string | null>(null);
@@ -31,8 +32,8 @@ export const WaitlistModal = ({ isOpen, onClose }: WaitlistModalProps) => {
     handleSubmit(async (validEmail) => {
       setLoading(true);
       try {
-        trackCTA('navbar_join_waitlist', { email: validEmail, market });
-        await signup({ email: validEmail, source: 'modal', plan_intent: 'waitlist', market });
+        trackCTA('navbar_join_waitlist', { email: validEmail, market, plan: planName });
+        await signup({ email: validEmail, source: 'modal', plan_intent: planName || 'waitlist', market });
         toast.success('You’re in. Check your email for your invite link.');
         setTimeout(() => {
           resetForm();

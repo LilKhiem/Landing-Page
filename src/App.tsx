@@ -25,13 +25,19 @@ import { Toaster } from 'sonner';
 
 export default function App() {
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+  const [waitlistPlan, setWaitlistPlan] = useState<string | undefined>(undefined);
+
+  const handleOpenWaitlist = (plan?: string) => {
+    setWaitlistPlan(plan);
+    setIsWaitlistOpen(true);
+  };
 
   return (
     <div className="bg-[#050709] min-h-screen text-[#E8EDF5]">
       <Toaster position="top-center" theme="dark" />
-      <WaitlistModal isOpen={isWaitlistOpen} onClose={() => setIsWaitlistOpen(false)} />
-      <Navbar onOpenWaitlist={() => setIsWaitlistOpen(true)} />
-      <Hero onOpenWaitlist={() => setIsWaitlistOpen(true)} />
+      <WaitlistModal isOpen={isWaitlistOpen} onClose={() => setIsWaitlistOpen(false)} planName={waitlistPlan} />
+      <Navbar onOpenWaitlist={() => handleOpenWaitlist()} />
+      <Hero onOpenWaitlist={() => handleOpenWaitlist()} />
       <HowItWorks />
       <WorkflowDiagram />
       <ValidationEngine />
@@ -41,10 +47,10 @@ export default function App() {
       <StrategyResults />
       <ComparisonTable />
       <PerformanceBenchmarks />
-      <Pricing onOpenWaitlist={() => setIsWaitlistOpen(true)} />
+      <Pricing onOpenWaitlist={handleOpenWaitlist} />
       <Referrals />
-      <FinalCTA onOpenWaitlist={() => setIsWaitlistOpen(true)} />
-      <Footer onOpenWaitlist={() => setIsWaitlistOpen(true)} />
+      <FinalCTA onOpenWaitlist={() => handleOpenWaitlist()} />
+      <Footer onOpenWaitlist={() => handleOpenWaitlist()} />
     </div>
   );
 }
