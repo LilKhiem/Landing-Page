@@ -13,9 +13,12 @@ export const Footer = ({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) => {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-wrap items-center justify-between gap-8 mb-12">
           <div className="font-display text-lg font-bold tracking-tight">NEXUS<span className="text-[#F0B429]">IDE</span> <span className="text-[#3A4A5C] font-normal text-[13px]">by AlgoXpert</span></div>
-          <ul className="flex gap-6 list-none">
-            <li><a href="#" className="text-xs text-[#3A4A5C] font-['JetBrains_Mono'] hover:text-white transition">Platform</a></li>
-            <li><a href="https://github.com/algoxpert/nexus" className="text-xs text-[#3A4A5C] font-['JetBrains_Mono'] hover:text-white transition">GitHub</a></li>
+          <ul className="flex flex-wrap gap-6 list-none">
+            <li><a href="/privacy" className="text-[10px] text-[#3A4A5C] font-['JetBrains_Mono'] hover:text-white transition">Privacy Policy</a></li>
+            <li><a href="/terms" className="text-[10px] text-[#3A4A5C] font-['JetBrains_Mono'] hover:text-white transition">Terms of Service</a></li>
+            <li><a href="/risk-disclosure" className="text-[10px] text-[#3A4A5C] font-['JetBrains_Mono'] hover:text-white transition">Risk Disclosure</a></li>
+            <li><a href="mailto:admin@algoxpert.org" className="text-[10px] text-[#3A4A5C] font-['JetBrains_Mono'] hover:text-white transition">Contact</a></li>
+            <li><a href="https://linkedin.com/company/algoxpert" target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#3A4A5C] font-['JetBrains_Mono'] hover:text-white transition">LinkedIn</a></li>
           </ul>
           <button 
             onClick={handleJoinWaitlist}

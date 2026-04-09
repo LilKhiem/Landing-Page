@@ -14,6 +14,10 @@ export const MockCheckout = ({ isOpen, onClose, planName, price, isYearly }: Moc
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const futureDate = new Date();
+  futureDate.setDate(futureDate.getDate() + 14);
+  const chargeDatestr = futureDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
   const handlePay = (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
@@ -88,9 +92,12 @@ export const MockCheckout = ({ isOpen, onClose, planName, price, isYearly }: Moc
                 </div>
               </div>
 
-              <div className="mt-8 flex items-center gap-2 text-xs text-gray-500">
-                <ShieldCheck className="w-4 h-4 text-green-500" />
-                <span>14-day money-back guarantee</span>
+              <div className="mt-8 flex items-start gap-2 text-xs text-gray-500 p-4 bg-gray-100 rounded-lg">
+                <ShieldCheck className="w-5 h-5 text-green-500 shrink-0" />
+                <div>
+                  <span className="font-bold text-gray-700 block mb-1">14-day free trial</span>
+                  <span>You will be charged ${price}.00 on {chargeDatestr}. Cancel anytime before this date to avoid being charged.</span>
+                </div>
               </div>
             </div>
 

@@ -22,6 +22,7 @@ import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
 import { WaitlistModal } from './components/WaitlistModal';
 import { MockCheckout } from './components/MockCheckout';
+import { PrivacyPolicy, TermsOfService, RiskDisclosure } from './components/Legal';
 import { Toaster } from 'sonner';
 
 declare global {
@@ -48,6 +49,11 @@ export default function App() {
   const openCheckout = (planName: string, price: number, isYearly: boolean) => {
     setCheckoutState({ isOpen: true, planName, price, isYearly });
   };
+
+  const path = window.location.pathname;
+  if (path === '/privacy') return <PrivacyPolicy />;
+  if (path === '/terms') return <TermsOfService />;
+  if (path === '/risk-disclosure') return <RiskDisclosure />;
 
   return (
     <div className="bg-[#050709] min-h-screen text-[#E8EDF5]">

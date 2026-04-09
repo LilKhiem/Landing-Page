@@ -4,27 +4,39 @@ import { Check, Zap } from "lucide-react";
 
 const plans = [
   {
-    name: "Explorer",
-    price: { monthly: 0, yearly: 0 },
-    desc: "For individual researchers.",
-    features: ["5 strategy generations / mo", "Basic IS/OOS validation", "Community access", "Standard compute"],
-    cta: "Start for Free",
+    name: "Starter",
+    badge: "Founding — 50 seats left",
+    price: { monthly: 29, yearly: 247 },
+    oldPrice: { monthly: null, yearly: 297 },
+    suffix: { monthly: "/ mo", yearly: "/ year" },
+    desc: "For independent developers validating core ideas.",
+    features: ["50 Strategy Slots", "Full IS → WFA → OOS validation", "Evidence Ledger export", "Community support"],
+    cta: "Start 14-Day Free Trial",
+    ctaNote: "Card required. Cancel before day 14 — no charge.",
     popular: false
   },
   {
     name: "Pro",
-    price: { monthly: 99, yearly: 79 },
-    desc: "For serious quants.",
-    features: ["Unlimited generations", "Full 8-gate certification", "Evidence Ledger access", "Priority GPU compute", "Full NEXUS Metrics dashboard"],
-    cta: "Get Started",
+    badge: "Founding — 30 seats left",
+    price: { monthly: 99, yearly: 797 },
+    oldPrice: { monthly: null, yearly: 997 },
+    suffix: { monthly: "/ mo", yearly: "/ year" },
+    desc: "For active quants needing full research depth.",
+    features: ["Everything in Starter", "30 Strategy Slots", "Private code exports (Python / C++ / MQL5)", "Full Evidence Ledger + certification reports", "Priority generation queue"],
+    cta: "Start 14-Day Free Trial",
+    ctaNote: "Card required. Cancel before day 14 — no charge.",
     popular: true
   },
   {
-    name: "Institutional",
-    price: { monthly: 499, yearly: 399 },
-    desc: "For funds and professional desks.",
-    features: ["Unlimited generations", "White-label Risk OS", "Private ledger instance", "NEXUS Keys & CLI", "Custom risk gates"],
-    cta: "Contact Sales",
+    name: "Elite",
+    badge: "Founding — 10 seats left",
+    price: { monthly: 2497, yearly: 3997 },
+    oldPrice: { monthly: null, yearly: 4997 },
+    suffix: { monthly: "/ year", yearly: "Lifetime" },
+    desc: "One-time access. No renewals. Forever.",
+    features: ["Everything in Pro", "10 Strategy Slots", "Lifetime access — no renewals", "Priority support & generation", "Early access to all future features"],
+    cta: "Get Lifetime Access",
+    ctaNote: "Card required. 14-day free trial included.",
     popular: false
   }
 ];
@@ -37,19 +49,11 @@ export const Pricing = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: (p
   const [isYearly, setIsYearly] = useState(true);
 
   const handlePlanClick = async (plan: typeof plans[0]) => {
-    const ctaId = plan.name === 'Explorer' ? 'pricing_explorer_start' : 
-                  plan.name === 'Pro' ? 'pricing_pro_get_started' : 
-                  'pricing_institutional_contact';
-    
+    const ctaId = `pricing_${plan.name.toLowerCase()}_click`;
     trackCTA(ctaId as any, { plan: plan.name, isYearly });
 
-    if (plan.name === 'Institutional') {
-      onOpenWaitlist(plan.name); // Open modal for contact
-      return;
-    }
-
-    // Open mock checkout
-    onOpenCheckout(plan.name, isYearly ? plan.price.yearly : plan.price.monthly, isYearly);
+    const price = isYearly ? plan.price.yearly : plan.price.monthly;
+    onOpenCheckout(plan.name, price, isYearly);
   };
 
   return (
@@ -85,15 +89,22 @@ export const Pricing = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: (p
               className={`p-8 rounded-3xl border transition-all relative flex flex-col ${plan.popular ? 'border-[#F0B429] bg-[#F0B429]/5 shadow-[0_0_30px_rgba(240,180,41,0.1)]' : 'border-[#1A2333] bg-[#0A101A]'}`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#F0B429] text-black text-[9px] font-black px-3 py-1 rounded-full tracking-widest uppercase">MOST POPULAR</div>
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#F0B429] text-black text-[9px] font-black px-3 py-1 rounded-full tracking-widest uppercase w-max">MOST POPULAR</div>
               )}
               
-              <div className="mb-8">
+              <div className="mb-8 mt-2">
+                <div className="inline-block px-2 py-1 bg-[#1A2333] border border-[#3A4A5C] rounded-md text-[#F0B429] text-[10px] font-bold tracking-wider uppercase mb-4">{plan.badge}</div>
                 <h4 className="text-2xl font-bold mb-3 font-display">{plan.name}</h4>
                 <p className="text-xs text-[#7A8BA0] mb-6">{plan.desc}</p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-bold font-display tracking-tight">${isYearly ? plan.price.yearly : plan.price.monthly}</span>
-                  <span className="text-xs text-[#4A5568] font-bold uppercase tracking-widest">/ mo</span>
+                
+                <div className="flex flex-col gap-1">
+                  {isYearly && plan.oldPrice.yearly && (
+                    <span className="text-sm text-[#4A5568] line-through font-['JetBrains_Mono']">${plan.oldPrice.yearly}</span>
+                  )}
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-5xl font-bold font-display tracking-tight">${isYearly ? plan.price.yearly : plan.price.monthly}</span>
+                    <span className="text-xs text-[#4A5568] font-bold uppercase tracking-widest">{isYearly ? plan.suffix.yearly : plan.suffix.monthly}</span>
+                  </div>
                 </div>
               </div>
 
@@ -106,35 +117,30 @@ export const Pricing = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: (p
                 ))}
               </ul>
 
-              {plan.name === 'Institutional' ? (
+              <div className="flex flex-col gap-2">
                 <button 
                   onClick={() => handlePlanClick(plan)}
-                  className={`w-full py-4 rounded-xl text-xs font-black tracking-widest uppercase transition-all ${plan.popular ? 'bg-[#F0B429] text-black hover:shadow-[0_0_20px_rgba(240,180,41,0.4)]' : 'bg-white text-black hover:bg-[#F0B429]'}`}
+                  className={`block text-center w-full py-4 rounded-xl text-xs font-black tracking-widest uppercase transition-all ${plan.popular ? 'bg-[#F0B429] text-black hover:shadow-[0_0_20px_rgba(240,180,41,0.4)]' : 'bg-white text-black hover:bg-[#F0B429]'}`}
                 >
                   {plan.cta}
                 </button>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  <button 
-                    onClick={() => handlePlanClick(plan)}
-                    className={`lemonsqueezy-button block text-center w-full py-4 rounded-xl text-xs font-black tracking-widest uppercase transition-all ${plan.popular ? 'bg-[#F0B429] text-black hover:shadow-[0_0_20px_rgba(240,180,41,0.4)]' : 'bg-white text-black hover:bg-[#F0B429]'}`}
-                  >
-                    {plan.cta}
-                  </button>
-                  <p className="text-[9px] text-[#4A5568] text-center mt-1">Instant access after checkout. Cancel anytime.</p>
-                </div>
-              )}
+                <p className="text-[10px] text-[#4A5568] text-center mt-1">{plan.ctaNote}</p>
+              </div>
             </motion.div>
           ))}
         </div>
 
+        <div className="mt-12 max-w-3xl mx-auto bg-[#0A101A] border border-[#1A2333] rounded-2xl p-6">
+          <ul className="text-xs text-[#7A8BA0] space-y-3 text-left list-none">
+            <li className="flex gap-2 items-start"><span className="text-[#F0B429]">✦</span> Founding rates locked forever — cancel = lose rate permanently.</li>
+            <li className="flex gap-2 items-start"><span className="text-[#F0B429]">✦</span> Monthly plans available (Starter $29/mo, Pro $99/mo) — regular rate, no founding discount.</li>
+            <li className="flex gap-2 items-start"><span className="text-[#F0B429]">✦</span> Upgrade from Monthly to Annual Founding anytime while seats last.</li>
+            <li className="flex gap-2 items-start"><span className="text-[#F0B429]">✦</span> Enterprise / Institutional: contact <a href="mailto:admin@algoxpert.org" className="text-white underline">admin@algoxpert.org</a></li>
+          </ul>
+        </div>
         <div className="mt-8 text-center">
-          <p className="text-[10px] text-[#4A5568] font-bold tracking-widest uppercase mb-2">
-            Secured checkout by Lemon Squeezy (VAT & tax handled for you).
-          </p>
-          <p className="text-[10px] text-[#4A5568] font-bold tracking-widest uppercase">
-            <Zap className="w-3 h-3 inline-block mr-2 text-[#F0B429]" />
-            All plans include a 14-day money-back guarantee. No questions asked.
+          <p className="text-[10px] text-[#4A5568] uppercase max-w-3xl mx-auto">
+            DISCLAIMER: NOT FINANCIAL ADVICE. NEXUS IDE is a strategy research and validation tool for educational and software development purposes only. Trading involves substantial risk of loss. Past results not indicative of future performance.
           </p>
         </div>
 
