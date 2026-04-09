@@ -21,15 +21,32 @@ import { Referrals } from './components/Referrals';
 import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
 import { WaitlistModal } from './components/WaitlistModal';
+import { MockCheckout } from './components/MockCheckout';
 import { Toaster } from 'sonner';
+
+declare global {
+  interface Window {
+    createLemonSqueezy?: () => void;
+  }
+}
 
 export default function App() {
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const [waitlistPlan, setWaitlistPlan] = useState<string | undefined>(undefined);
+  const [checkoutState, setCheckoutState] = useState<{isOpen: boolean, planName: string, price: number, isYearly: boolean}>({
+    isOpen: false,
+    planName: 'Pro',
+    price: 99,
+    isYearly: false
+  });
 
   const handleOpenWaitlist = (plan?: string) => {
     setWaitlistPlan(plan);
     setIsWaitlistOpen(true);
+  };
+
+  const openCheckout = (planName: string, price: number, isYearly: boolean) => {
+    setCheckoutState({ isOpen: true, planName, price, isYearly });
   };
 
   return (
@@ -37,7 +54,7 @@ export default function App() {
       <Toaster position="top-center" theme="dark" />
       <WaitlistModal isOpen={isWaitlistOpen} onClose={() => setIsWaitlistOpen(false)} planName={waitlistPlan} />
       <Navbar onOpenWaitlist={() => handleOpenWaitlist()} />
-      <Hero onOpenWaitlist={() => handleOpenWaitlist()} />
+      <Hero onOpenWaitlist={() => handleOpenWaitlist()} onOpenCheckout={() => openCheckout('Pro', 99, false)} />
       <HowItWorks />
       <WorkflowDiagram />
       <ValidationEngine />
@@ -47,10 +64,18 @@ export default function App() {
       <StrategyResults />
       <ComparisonTable />
       <PerformanceBenchmarks />
-      <Pricing onOpenWaitlist={handleOpenWaitlist} />
+      <Pricing onOpenWaitlist={handleOpenWaitlist} onOpenCheckout={openCheckout} />
+      <TokenEconomy />
       <Referrals />
-      <FinalCTA onOpenWaitlist={() => handleOpenWaitlist()} />
+      <FinalCTA onOpenWaitlist={() => handleOpenWaitlist()} onOpenCheckout={() => openCheckout('Pro', 99, false)} />
       <Footer onOpenWaitlist={() => handleOpenWaitlist()} />
+      <MockCheckout 
+        isOpen={checkoutState.isOpen} 
+        onClose={() => setCheckoutState(prev => ({ ...prev, isOpen: false }))}
+        planName={checkoutState.planName}
+        price={checkoutState.price}
+        isYearly={checkoutState.isYearly}
+      />
     </div>
   );
 }

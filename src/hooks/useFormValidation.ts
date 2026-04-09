@@ -34,19 +34,12 @@ export const useFormValidation = () => {
     return false;
   };
 
-  const resetForm = useCallback(() => {
-    setEmail('');
-    setEmailError(null);
-    setIsSubmitted(false);
-  }, []);
-
   return {
     email,
     emailError,
     handleEmailChange,
     handleSubmit,
     isSubmitted,
-    setEmail,
-    resetForm
+    setEmail
   };
 };

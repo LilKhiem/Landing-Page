@@ -33,7 +33,7 @@ import { trackCTA } from '../lib/analytics';
 import { signup } from '../lib/api';
 import { toast } from 'sonner';
 
-export const Pricing = ({ onOpenWaitlist }: { onOpenWaitlist: (plan?: string) => void }) => {
+export const Pricing = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: (plan?: string) => void, onOpenCheckout: (plan: string, price: number, isYearly: boolean) => void }) => {
   const [isYearly, setIsYearly] = useState(true);
 
   const handlePlanClick = async (plan: typeof plans[0]) => {
@@ -48,8 +48,8 @@ export const Pricing = ({ onOpenWaitlist }: { onOpenWaitlist: (plan?: string) =>
       return;
     }
 
-    // For Explorer and Pro, we can either open waitlist or mock a direct signup
-    onOpenWaitlist(plan.name);
+    // Open mock checkout
+    onOpenCheckout(plan.name, isYearly ? plan.price.yearly : plan.price.monthly, isYearly);
   };
 
   return (
@@ -57,7 +57,8 @@ export const Pricing = ({ onOpenWaitlist }: { onOpenWaitlist: (plan?: string) =>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">PRICING</h2>
-          <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-10">Founding member rates. <br />Locked in for life.</h3>
+          <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-4">Founding member rates. <br />Locked in for life.</h3>
+          <p className="text-[#7A8BA0] text-sm mb-10">Billing handled by Lemon Squeezy (Merchant of Record), including global taxes and invoices.</p>
           
           <div className="flex items-center justify-center gap-4">
             <span className={`text-xs font-bold tracking-widest uppercase ${!isYearly ? 'text-white' : 'text-[#4A5568]'}`}>Monthly</span>
@@ -105,17 +106,32 @@ export const Pricing = ({ onOpenWaitlist }: { onOpenWaitlist: (plan?: string) =>
                 ))}
               </ul>
 
-              <button 
-                onClick={() => handlePlanClick(plan)}
-                className={`w-full py-4 rounded-xl text-xs font-black tracking-widest uppercase transition-all ${plan.popular ? 'bg-[#F0B429] text-black hover:shadow-[0_0_20px_rgba(240,180,41,0.4)]' : 'bg-white text-black hover:bg-[#F0B429]'}`}
-              >
-                {plan.cta}
-              </button>
+              {plan.name === 'Institutional' ? (
+                <button 
+                  onClick={() => handlePlanClick(plan)}
+                  className={`w-full py-4 rounded-xl text-xs font-black tracking-widest uppercase transition-all ${plan.popular ? 'bg-[#F0B429] text-black hover:shadow-[0_0_20px_rgba(240,180,41,0.4)]' : 'bg-white text-black hover:bg-[#F0B429]'}`}
+                >
+                  {plan.cta}
+                </button>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <button 
+                    onClick={() => handlePlanClick(plan)}
+                    className={`lemonsqueezy-button block text-center w-full py-4 rounded-xl text-xs font-black tracking-widest uppercase transition-all ${plan.popular ? 'bg-[#F0B429] text-black hover:shadow-[0_0_20px_rgba(240,180,41,0.4)]' : 'bg-white text-black hover:bg-[#F0B429]'}`}
+                  >
+                    {plan.cta}
+                  </button>
+                  <p className="text-[9px] text-[#4A5568] text-center mt-1">Instant access after checkout. Cancel anytime.</p>
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="mt-8 text-center">
+          <p className="text-[10px] text-[#4A5568] font-bold tracking-widest uppercase mb-2">
+            Secured checkout by Lemon Squeezy (VAT & tax handled for you).
+          </p>
           <p className="text-[10px] text-[#4A5568] font-bold tracking-widest uppercase">
             <Zap className="w-3 h-3 inline-block mr-2 text-[#F0B429]" />
             All plans include a 14-day money-back guarantee. No questions asked.

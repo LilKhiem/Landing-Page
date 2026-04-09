@@ -7,11 +7,11 @@ import { trackCTA } from '../lib/analytics';
 import { signup } from '../lib/api';
 import { toast } from 'sonner';
 
-export const FinalCTA = ({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) => {
+export const FinalCTA = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist?: () => void, onOpenCheckout?: () => void }) => {
   const [market, setMarket] = useState<string>('');
   const [marketError, setMarketError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { email, emailError, handleEmailChange, handleSubmit, resetForm } = useFormValidation();
+  const { email, emailError, handleEmailChange, handleSubmit } = useFormValidation();
   const markets = ['Crypto', 'FX', 'Gold', 'Prop Firm', 'SPX Option'];
 
   const onFormSubmit = async (e: React.FormEvent) => {
@@ -29,8 +29,7 @@ export const FinalCTA = ({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) =>
         await signup({ email: validEmail, source: 'footer_waitlist', plan_intent: 'waitlist' });
         toast.success('You’re in. Check your email for your invite link.');
         setTimeout(() => {
-          resetForm();
-          setMarket('');
+          window.location.href = `/referral?ref=ALPHA_QUANT`;
         }, 1500);
       } catch (error) {
         toast.error('Something went wrong. Please try again.');
@@ -146,6 +145,17 @@ export const FinalCTA = ({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) =>
           <p className="mt-12 text-[10px] text-black/50 font-bold tracking-widest uppercase">
             Free to join · No credit card · Instant referral link
           </p>
+          <div className="mt-6 flex justify-center">
+            <button 
+              onClick={(e) => {
+                e.preventDefault();
+                if (onOpenCheckout) onOpenCheckout();
+              }}
+              className="lemonsqueezy-button px-8 py-3 rounded-xl bg-transparent border-2 border-black text-black font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-black hover:text-[#F0B429] transition-all"
+            >
+              Upgrade to Pro Now
+            </button>
+          </div>
         </div>
       </div>
     </section>
