@@ -7,6 +7,7 @@ const plans = [
     name: "Starter",
     badge: "Founding — 50 seats left",
     price: { monthly: 29, yearly: 247 },
+    productIds: { monthly: 'ide-starter-monthly', yearly: 'ide-starter-annual-founding' },
     oldPrice: { monthly: null, yearly: 297 },
     suffix: { monthly: "/ mo", yearly: "/ year" },
     desc: "For independent developers validating core ideas.",
@@ -19,6 +20,7 @@ const plans = [
     name: "Pro",
     badge: "Founding — 30 seats left",
     price: { monthly: 99, yearly: 797 },
+    productIds: { monthly: 'ide-pro-monthly', yearly: 'ide-pro-annual-founding' },
     oldPrice: { monthly: null, yearly: 997 },
     suffix: { monthly: "/ mo", yearly: "/ year" },
     desc: "For active quants needing full research depth.",
@@ -31,6 +33,7 @@ const plans = [
     name: "Elite",
     badge: "Founding — 10 seats left",
     price: { monthly: 2497, yearly: 3997 },
+    productIds: { monthly: 'ide-elite-annual', yearly: 'ide-elite-lifetime-founding' },
     oldPrice: { monthly: null, yearly: 4997 },
     suffix: { monthly: "/ year", yearly: "Lifetime" },
     desc: "One-time access. No renewals. Forever.",
@@ -42,18 +45,17 @@ const plans = [
 ];
 
 import { trackCTA } from '../lib/analytics';
-import { signup } from '../lib/api';
 import { toast } from 'sonner';
 
-export const Pricing = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: (plan?: string) => void, onOpenCheckout: (plan: string, price: number, isYearly: boolean) => void }) => {
+export const Pricing = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: (plan?: string) => void, onOpenCheckout: (productId: string) => void }) => {
   const [isYearly, setIsYearly] = useState(true);
 
   const handlePlanClick = async (plan: typeof plans[0]) => {
     const ctaId = `pricing_${plan.name.toLowerCase()}_click`;
     trackCTA(ctaId as any, { plan: plan.name, isYearly });
 
-    const price = isYearly ? plan.price.yearly : plan.price.monthly;
-    onOpenCheckout(plan.name, price, isYearly);
+    const productId = isYearly ? plan.productIds.yearly : plan.productIds.monthly;
+    onOpenCheckout(productId);
   };
 
   return (
