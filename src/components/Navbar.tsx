@@ -9,7 +9,7 @@ export const Navbar = ({
   onOpenProfile 
 }: { 
   onOpenWaitlist: () => void,
-  onOpenAuth: () => void,
+  onOpenAuth: (mode: 'login' | 'register') => void,
   isLoggedIn: boolean,
   onOpenProfile: () => void
 }) => {
@@ -42,12 +42,20 @@ export const Navbar = ({
             Dashboard
           </a>
         ) : (
-          <button 
-            onClick={onOpenAuth}
-            className="text-[#7A8BA0] hover:text-white font-['JetBrains_Mono'] text-[11px] font-bold tracking-widest uppercase transition"
-          >
-            Sign In
-          </button>
+          <>
+            <button 
+              onClick={() => onOpenAuth('login')}
+              className="text-[#7A8BA0] hover:text-white font-['JetBrains_Mono'] text-[11px] font-bold tracking-widest uppercase transition"
+            >
+              Sign In
+            </button>
+            <button 
+              onClick={() => onOpenAuth('register')}
+              className="text-indigo-400 hover:text-indigo-300 font-['JetBrains_Mono'] text-[11px] font-bold tracking-widest uppercase transition ml-2"
+            >
+              Sign Up
+            </button>
+          </>
         )}
         <button 
           onClick={handleJoinWaitlist}

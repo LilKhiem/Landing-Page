@@ -25,6 +25,7 @@ import { AuthModal } from './components/AuthModal';
 import { CheckoutModal } from './components/CheckoutModal';
 import { Dashboard } from './components/Dashboard';
 import { PrivacyPolicy, TermsOfService, RiskDisclosure } from './components/Legal';
+import { ResetPasswordModal } from './components/ResetPasswordModal';
 import { Toaster, toast } from 'sonner';
 
 declare global {
@@ -40,14 +41,48 @@ export default function App() {
   
   // Auth & Checkout State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [pendingProductId, setPendingProductId] = useState<string | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('nexus_access_token'));
+  const [resetToken, setResetToken] = useState<string | null>(null);
 
-  // Initialize Lemon Squeezy
+  // Initialize Lemon Squeezy and handle URL tokens
   React.useEffect(() => {
     if (window.createLemonSqueezy) {
       window.createLemonSqueezy();
+    }
+    
+    // Check URL search params for verification or password reset
+    const params = new URLSearchParams(window.location.search);
+    const verify = params.get('verify');
+    const reset = params.get('reset');
+
+    if (verify) {
+      // Clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+      const adminUrl = import.meta.env.VITE_ADMIN_URL || 'http://localhost:8000';
+      fetch(`${adminUrl}/api/auth/verify-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: verify })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          toast.success("Email verified successfully! You can now sign in.");
+          setAuthMode('login');
+          setIsAuthModalOpen(true);
+        } else {
+          toast.error(data.error || "Invalid or expired verification link.");
+        }
+      })
+      .catch((err) => toast.error("Verification failed."));
+    }
+
+    if (reset) {
+      window.history.replaceState({}, '', window.location.pathname);
+      setResetToken(reset);
     }
   }, []);
 
@@ -84,6 +119,7 @@ export default function App() {
     const token = localStorage.getItem('nexus_access_token');
     if (!token) {
       setPendingProductId(productId);
+      setAuthMode('register');
       setIsAuthModalOpen(true);
     } else {
       processCheckout(productId, token);
@@ -111,6 +147,15 @@ export default function App() {
   if (path === '/terms') return <TermsOfService />;
   if (path === '/risk-disclosure') return <RiskDisclosure />;
   if (path === '/dashboard') return <Dashboard />;
+  
+  if (resetToken) {
+    return (
+      <div className="bg-[#050709] min-h-screen text-[#E8EDF5]">
+        <Toaster position="top-center" theme="dark" />
+        <ResetPasswordModal token={resetToken} onClose={() => setResetToken(null)} />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#050709] min-h-screen text-[#E8EDF5]">
@@ -119,6 +164,7 @@ export default function App() {
       
       <AuthModal 
         isOpen={isAuthModalOpen} 
+        initialMode={authMode}
         onClose={() => { setIsAuthModalOpen(false); setPendingProductId(null); }} 
         onSuccess={handleAuthSuccess}
         intendedProductId={pendingProductId || undefined}
@@ -126,7 +172,7 @@ export default function App() {
 
       <Navbar 
         onOpenWaitlist={() => handleOpenWaitlist()} 
-        onOpenAuth={() => { setPendingProductId(null); setIsAuthModalOpen(true); }}
+        onOpenAuth={(mode) => { setAuthMode(mode); setPendingProductId(null); setIsAuthModalOpen(true); }}
         isLoggedIn={isLoggedIn}
         onOpenProfile={() => window.location.href = '/dashboard'}
       />
