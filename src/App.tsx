@@ -57,6 +57,25 @@ export default function App() {
     const params = new URLSearchParams(window.location.search);
     const verify = params.get('verify');
     const reset = params.get('reset');
+    const vscodeCallback = params.get('vscode_callback');
+
+    if (vscodeCallback) {
+      const token = localStorage.getItem('nexus_access_token');
+      if (token) {
+        let email = "User";
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          if (payload.email) email = payload.email;
+        } catch (e) {}
+        window.location.href = `${vscodeCallback}?token=${token}&email=${encodeURIComponent(email)}`;
+        return;
+      }
+
+      localStorage.setItem('vscode_callback', vscodeCallback);
+      window.history.replaceState({}, '', window.location.pathname);
+      setAuthMode('login');
+      setIsAuthModalOpen(true);
+    }
 
     if (verify) {
       // Clean URL
@@ -126,9 +145,17 @@ export default function App() {
     }
   };
 
-  const handleAuthSuccess = (token: string) => {
+  const handleAuthSuccess = (token: string, identityToken?: string, email?: string) => {
     setIsLoggedIn(true);
     setIsAuthModalOpen(false);
+
+    const vscodeCb = localStorage.getItem('vscode_callback');
+    if (vscodeCb) {
+      localStorage.removeItem('vscode_callback');
+      window.location.href = `${vscodeCb}?token=${token}&email=${encodeURIComponent(email || 'User')}`;
+      return;
+    }
+
     if (pendingProductId) {
       processCheckout(pendingProductId, token);
       setPendingProductId(null);

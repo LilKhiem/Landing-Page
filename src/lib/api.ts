@@ -13,11 +13,12 @@ export const signup = async (payload: SignupPayload) => {
     if (val) utmParams[p] = val;
   });
 
-  const response = await fetch('/api/signup', {
+  const response = await fetch('https://admin.algoxpert.org/api/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       ...payload,
+      source: 'NEXUS IDE WAITLIST',
       utm: { ...utmParams, ...payload.utm },
     }),
   });

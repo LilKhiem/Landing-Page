@@ -7,7 +7,7 @@ interface AuthModalProps {
   isOpen: boolean;
   initialMode?: 'login' | 'register';
   onClose: () => void;
-  onSuccess: (token: string, identityToken: string) => void;
+  onSuccess: (token: string, identityToken: string, email: string) => void;
   intendedProductId?: string;
 }
 
@@ -82,7 +82,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, initialMode = 'log
         if (data.identity_token) {
            localStorage.setItem('nexus_identity_token', data.identity_token);
         }
-        onSuccess(data.access_token, data.identity_token || 'python_backend_no_identity_token');
+        onSuccess(data.access_token, data.identity_token || 'python_backend_no_identity_token', data.email || formData.email);
       }
       
     } catch (err: any) {

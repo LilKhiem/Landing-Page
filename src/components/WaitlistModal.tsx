@@ -14,7 +14,7 @@ import { signup } from '../lib/api';
 import { toast } from 'sonner';
 
 export const WaitlistModal = ({ isOpen, onClose, planName }: WaitlistModalProps) => {
-  const { email, emailError, handleEmailChange, handleSubmit, isSubmitted } = useFormValidation();
+  const { email, emailError, handleEmailChange, handleSubmit, isSubmitted, setEmail } = useFormValidation();
   const [market, setMarket] = useState<string>('');
   const [marketError, setMarketError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,8 @@ export const WaitlistModal = ({ isOpen, onClose, planName }: WaitlistModalProps)
         toast.success('You’re in. Check your email for your invite link.');
         setTimeout(() => {
           onClose();
-          window.location.href = `/referral?ref=ALPHA_QUANT`;
+          setEmail('');
+          setMarket('');
         }, 1500);
       } catch (error) {
         toast.error('Something went wrong. Please try again.');
