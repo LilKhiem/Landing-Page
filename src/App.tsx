@@ -124,13 +124,18 @@ export default function App() {
       });
       const data = await res.json();
       
-      if (!res.ok) throw new Error(data.message || 'Failed to fetch checkout link');
+      if (!res.ok) {
+        if (data.error === 'user_already_has_active_subscription') {
+          throw new Error('You already have an active subscription! Please manage it from your Dashboard.');
+        }
+        throw new Error(data.error || data.message || 'Failed to fetch checkout link');
+      }
       
       if (data.url) {
         setCheckoutUrl(data.url);
       }
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err.message, { duration: 5000 });
     }
   };
 

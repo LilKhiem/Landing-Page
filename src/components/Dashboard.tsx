@@ -22,6 +22,7 @@ export const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [subscriptions, setSubscriptions] = useState<SubscriptionData[]>([]);
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwords, setPasswords] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,6 +68,32 @@ export const Dashboard = () => {
       window.location.href = '/';
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancelSubscription = async (subId: string) => {
+    if (!confirm('Are you sure you want to cancel this subscription? You will still have access until the end of the billing period.')) return;
+    setCancelingId(subId);
+    try {
+      const adminUrl = import.meta.env.VITE_ADMIN_URL || 'http://localhost:8000';
+      const token = localStorage.getItem('nexus_access_token');
+      const res = await fetch(`${adminUrl}/api/auth/subscriptions/${subId}/cancel`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to cancel subscription');
+      
+      toast.success('Subscription cancelled successfully.');
+      fetchUserProfile();
+    } catch (err: any) {
+      if (err.message === 'cannot_cancel_onetime_payment') {
+        toast.error('One-time payments cannot be cancelled via API.');
+      } else {
+        toast.error(err.message || 'An error occurred.');
+      }
+    } finally {
+      setCancelingId(null);
     }
   };
 
@@ -318,13 +345,14 @@ export const Dashboard = () => {
                         <th className="pb-3 pr-4 font-['JetBrains_Mono']">Plan</th>
                         <th className="pb-3 pr-4 font-['JetBrains_Mono']">Status</th>
                         <th className="pb-3 font-['JetBrains_Mono'] text-right">Expiration</th>
+                        <th className="pb-3 pl-4"></th>
                       </tr>
                     </thead>
                     <tbody className="text-sm">
                       {subscriptions.map((sub, idx) => (
                         <tr key={sub.id || idx} className="border-b border-[#1A2333]/50 last:border-0 hover:bg-[#1A2333]/30 transition-colors">
                           <td className="py-4 pr-4 font-['JetBrains_Mono'] text-[#7A8BA0]">
-                            {sub.created_at ? new Date(sub.created_at).toLocaleDateString() : 'N/A'}
+                            {(sub.started_at || sub.created_at) ? new Date(sub.started_at || sub.created_at).toLocaleDateString() : 'N/A'}
                           </td>
                           <td className="py-4 pr-4">
                             <span className="bg-[#1A2333] text-white px-2 py-1 rounded text-xs font-bold uppercase tracking-wider">
@@ -343,6 +371,17 @@ export const Dashboard = () => {
                           </td>
                           <td className="py-4 font-['JetBrains_Mono'] text-right text-[#7A8BA0]">
                             {sub.expires_at ? new Date(sub.expires_at).toLocaleDateString() : 'Lifetime'}
+                          </td>
+                          <td className="py-4 pl-4 text-right">
+                            {sub.status === 'active' && (
+                              <button
+                                onClick={() => handleCancelSubscription(sub.id)}
+                                disabled={cancelingId === sub.id}
+                                className="text-xs text-red-500/80 hover:text-red-400 transition-colors disabled:opacity-50 underline decoration-red-500/30 underline-offset-2"
+                              >
+                                {cancelingId === sub.id ? 'Canceling...' : 'Cancel'}
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
