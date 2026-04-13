@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, LogOut, Award, Loader2, CreditCard, ArrowLeft, Download, ShieldCheck } from 'lucide-react';
+import { Mail, LogOut, Award, Loader2, CreditCard, ArrowLeft, Download, ShieldCheck, Key } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
-
 interface UserData {
   name: string;
   email: string;
@@ -9,9 +9,22 @@ interface UserData {
   plan_status: string | null;
 }
 
+interface SubscriptionData {
+  id: string;
+  plan_key: string;
+  status: string;
+  started_at: string;
+  expires_at: string;
+  created_at: string;
+}
+
 export const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [subscriptions, setSubscriptions] = useState<SubscriptionData[]>([]);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwords, setPasswords] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetchUserProfile();
@@ -27,16 +40,26 @@ export const Dashboard = () => {
       }
 
       const adminUrl = import.meta.env.VITE_ADMIN_URL || 'http://localhost:8000';
-      const res = await fetch(`${adminUrl}/api/auth/user`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
-        }
-      });
-      const data = await res.json();
+      const [userRes, subsRes] = await Promise.all([
+        fetch(`${adminUrl}/api/auth/user`, {
+          headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
+        }),
+        fetch(`${adminUrl}/api/auth/subscriptions`, {
+          headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
+        })
+      ]);
+
+      const userData = await userRes.json();
       
-      if (!res.ok) throw new Error(data.message || 'Failed to fetch user data');
-      setUserData(data.user || data);
+      if (!userRes.ok) throw new Error(userData.message || 'Failed to fetch user data');
+      setUserData(userData.user || userData);
+
+      if (subsRes.ok) {
+        const subsData = await subsRes.json();
+        if (Array.isArray(subsData)) {
+          setSubscriptions(subsData);
+        }
+      }
     } catch (err: any) {
       toast.error('Session expired. Please sign in again.');
       localStorage.removeItem('nexus_access_token');
@@ -51,6 +74,46 @@ export const Dashboard = () => {
     localStorage.removeItem('nexus_access_token');
     localStorage.removeItem('nexus_identity_token');
     window.location.href = '/';
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwords.newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters long');
+      return;
+    }
+    if (passwords.newPassword !== passwords.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const token = localStorage.getItem('nexus_access_token');
+      const adminUrl = import.meta.env.VITE_ADMIN_URL || 'http://localhost:8000';
+      const res = await fetch(`${adminUrl}/api/auth/change-password`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          old_password: passwords.oldPassword,
+          new_password: passwords.newPassword
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || data.message || 'Failed to change password');
+      
+      toast.success('Password changed successfully');
+      setIsChangingPassword(false);
+      setPasswords({ oldPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -96,8 +159,68 @@ export const Dashboard = () => {
                   {userData?.name.charAt(0).toUpperCase()}
                 </div>
                 <h2 className="text-xl font-bold text-white mb-1">{userData?.name}</h2>
-                <div className="text-[#7A8BA0] flex items-center justify-center gap-2 text-sm bg-[#1A2333]/50 px-3 py-1 rounded-full">
+                <div className="text-[#7A8BA0] flex items-center justify-center gap-2 text-sm bg-[#1A2333]/50 px-3 py-1 rounded-full mb-6">
                   <Mail className="w-3 h-3" /> {userData?.email}
+                </div>
+                
+                <div className="w-full border-t border-[#1A2333] pt-4">
+                  <button
+                    onClick={() => setIsChangingPassword(!isChangingPassword)}
+                    className="w-full flex items-center justify-center gap-2 text-sm font-bold tracking-widest uppercase text-emerald-400 hover:text-emerald-300 transition-colors"
+                  >
+                    <Key className="w-4 h-4" />
+                    {isChangingPassword ? 'Cancel Change' : 'Change Password'}
+                  </button>
+
+                  <AnimatePresence>
+                    {isChangingPassword && (
+                      <motion.form
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mt-4 space-y-3 text-left overflow-hidden"
+                        onSubmit={handleChangePassword}
+                      >
+                        <div>
+                          <input
+                            type="password"
+                            placeholder="Current Password"
+                            required
+                            value={passwords.oldPassword}
+                            onChange={e => setPasswords({ ...passwords, oldPassword: e.target.value })}
+                            className="w-full bg-[#1A2333]/50 border border-[#2A3441] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                          />
+                        </div>
+                        <div>
+                          <input
+                            type="password"
+                            placeholder="New Password"
+                            required
+                            value={passwords.newPassword}
+                            onChange={e => setPasswords({ ...passwords, newPassword: e.target.value })}
+                            className="w-full bg-[#1A2333]/50 border border-[#2A3441] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                          />
+                        </div>
+                        <div>
+                          <input
+                            type="password"
+                            placeholder="Confirm New Password"
+                            required
+                            value={passwords.confirmPassword}
+                            onChange={e => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+                            className="w-full bg-[#1A2333]/50 border border-[#2A3441] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 rounded-xl transition-colors shadow-lg disabled:opacity-50 flex justify-center items-center gap-2 text-sm uppercase tracking-wider"
+                        >
+                          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin text-black" /> : 'Update Password'}
+                        </button>
+                      </motion.form>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </div>
@@ -179,6 +302,58 @@ export const Dashboard = () => {
                   </div>
                 </button>
               </div>
+            </div>
+
+            <div className="bg-[#0A101A] border border-[#1A2333] rounded-2xl p-8 shadow-xl">
+              <h3 className="text-lg font-display font-bold text-white mb-6 flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-indigo-500" /> Payment & Subscription History
+              </h3>
+              
+              {subscriptions.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-[#1A2333] text-xs font-bold text-[#7A8BA0] uppercase tracking-wider">
+                        <th className="pb-3 pr-4 font-['JetBrains_Mono']">Date</th>
+                        <th className="pb-3 pr-4 font-['JetBrains_Mono']">Plan</th>
+                        <th className="pb-3 pr-4 font-['JetBrains_Mono']">Status</th>
+                        <th className="pb-3 font-['JetBrains_Mono'] text-right">Expiration</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-sm">
+                      {subscriptions.map((sub, idx) => (
+                        <tr key={sub.id || idx} className="border-b border-[#1A2333]/50 last:border-0 hover:bg-[#1A2333]/30 transition-colors">
+                          <td className="py-4 pr-4 font-['JetBrains_Mono'] text-[#7A8BA0]">
+                            {sub.created_at ? new Date(sub.created_at).toLocaleDateString() : 'N/A'}
+                          </td>
+                          <td className="py-4 pr-4">
+                            <span className="bg-[#1A2333] text-white px-2 py-1 rounded text-xs font-bold uppercase tracking-wider">
+                              {sub.plan_key?.replace('ide-', '').replace(/-/g, ' ') || 'Unknown'}
+                            </span>
+                          </td>
+                          <td className="py-4 pr-4">
+                            <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${
+                              sub.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
+                              sub.status === 'expired' ? 'bg-[#1A2333] text-[#7A8BA0]' :
+                              sub.status === 'canceled' ? 'bg-red-500/20 text-red-400' :
+                              'bg-indigo-500/20 text-indigo-400'
+                            }`}>
+                              {sub.status || 'pending'}
+                            </span>
+                          </td>
+                          <td className="py-4 font-['JetBrains_Mono'] text-right text-[#7A8BA0]">
+                            {sub.expires_at ? new Date(sub.expires_at).toLocaleDateString() : 'Lifetime'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-8 bg-[#1A2333]/20 rounded-xl border border-[#2A3441] border-dashed">
+                  <p className="text-[#7A8BA0] text-sm">No payment history found.</p>
+                </div>
+              )}
             </div>
 
           </div>

@@ -173,7 +173,12 @@ export default function App() {
   if (path === '/privacy') return <PrivacyPolicy />;
   if (path === '/terms') return <TermsOfService />;
   if (path === '/risk-disclosure') return <RiskDisclosure />;
-  if (path === '/dashboard') return <Dashboard />;
+  if (path === '/dashboard') return (
+    <>
+      <Toaster position="top-center" theme="dark" />
+      <Dashboard />
+    </>
+  );
   
   if (resetToken) {
     return (

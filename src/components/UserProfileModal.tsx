@@ -19,6 +19,9 @@ interface UserData {
 export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose, onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwords, setPasswords] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -54,6 +57,46 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
   const handleLogoutClick = () => {
     onClose();
     onLogout();
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwords.newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters long');
+      return;
+    }
+    if (passwords.newPassword !== passwords.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const token = localStorage.getItem('nexus_access_token');
+      const adminUrl = import.meta.env.VITE_ADMIN_URL || 'http://localhost:8000';
+      const res = await fetch(`${adminUrl}/api/auth/change-password`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          old_password: passwords.oldPassword,
+          new_password: passwords.newPassword
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || data.message || 'Failed to change password');
+      
+      toast.success('Password changed successfully');
+      setIsChangingPassword(false);
+      setPasswords({ oldPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -128,6 +171,65 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
                       No active subscription found. Upgrade your plan to get full access to the NEXUS IDE.
                     </div>
                   )}
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    onClick={() => setIsChangingPassword(!isChangingPassword)}
+                    className="text-sm font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
+                  >
+                    {isChangingPassword ? 'Cancel password change' : 'Change Password'}
+                  </button>
+
+                  <AnimatePresence>
+                    {isChangingPassword && (
+                      <motion.form
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mt-4 space-y-3"
+                        onSubmit={handleChangePassword}
+                      >
+                        <div>
+                          <input
+                            type="password"
+                            placeholder="Current Password"
+                            required
+                            value={passwords.oldPassword}
+                            onChange={e => setPasswords({ ...passwords, oldPassword: e.target.value })}
+                            className="w-full bg-[#0A101A] border border-[#2A3441] rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50"
+                          />
+                        </div>
+                        <div>
+                          <input
+                            type="password"
+                            placeholder="New Password"
+                            required
+                            value={passwords.newPassword}
+                            onChange={e => setPasswords({ ...passwords, newPassword: e.target.value })}
+                            className="w-full bg-[#0A101A] border border-[#2A3441] rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50"
+                          />
+                        </div>
+                        <div>
+                          <input
+                            type="password"
+                            placeholder="Confirm New Password"
+                            required
+                            value={passwords.confirmPassword}
+                            onChange={e => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+                            className="w-full bg-[#0A101A] border border-[#2A3441] rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50"
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl transition-colors shadow-lg disabled:opacity-50 flex justify-center items-center gap-2"
+                        >
+                          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Update Password'}
+                        </button>
+                      </motion.form>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <button
