@@ -11,7 +11,8 @@ export type CTAId =
   | 'marketplace_fork'
   | 'referral_copy_link'
   | 'referral_share_twitter'
-  | 'referral_share_linkedin';
+  | 'referral_share_linkedin'
+  | 'waitlist_signup_complete';
 
 export interface AnalyticsEvent {
   event: 'cta_click';

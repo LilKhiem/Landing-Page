@@ -96,20 +96,14 @@ const strategies: Strategy[] = [
 ];
 
 import { trackCTA } from '../lib/analytics';
-import { BetaModal } from './BetaModal';
 
-export const StrategyMarketplace = () => {
+export const StrategyMarketplace = ({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) => {
   const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
-  const [isBetaModalOpen, setIsBetaModalOpen] = useState(false);
-  const [betaModalTitle, setBetaModalTitle] = useState("");
-  const [betaSource, setBetaSource] = useState("");
 
-  const handleBetaAction = (title: string, source: string) => {
-    setBetaModalTitle(title);
-    setBetaSource(source);
-    setIsBetaModalOpen(true);
-    trackCTA(source as any);
+  const handleAction = () => {
+    onOpenWaitlist?.();
   };
+
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState("Newest");
@@ -173,7 +167,7 @@ export const StrategyMarketplace = () => {
           </div>
           
           <button 
-            onClick={() => handleBetaAction("NEXUS Marketplace publishing is in private beta.", "marketplace_publish")}
+            onClick={handleAction}
             className="flex items-center gap-2 px-8 py-4 bg-[#F0B429] text-black rounded-xl font-black text-xs tracking-widest uppercase hover:shadow-[0_0_30px_rgba(240,180,41,0.4)] transition-all duration-300 group"
           >
             <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
@@ -383,14 +377,14 @@ export const StrategyMarketplace = () => {
                 
                 <div className="grid grid-cols-2 gap-2">
                   <button 
-                    onClick={() => handleBetaAction("NEXUS Marketplace purchasing is in private beta.", "marketplace_buy")}
+                    onClick={handleAction}
                     className="flex items-center justify-center gap-2 py-3 bg-[#F0B429] text-black rounded-lg font-black text-[10px] tracking-widest uppercase hover:scale-[1.02] transition-all"
                   >
                     <ShoppingCart className="w-3 h-3" />
                     Buy
                   </button>
                   <button 
-                    onClick={() => handleBetaAction("NEXUS Marketplace forking is in private beta.", "marketplace_fork")}
+                    onClick={handleAction}
                     className="flex items-center justify-center gap-2 py-3 bg-[#1A2333] text-white rounded-lg font-black text-[10px] tracking-widest uppercase hover:bg-[#2A3343] transition-all"
                   >
                     <GitFork className="w-3 h-3" />
@@ -482,11 +476,17 @@ export const StrategyMarketplace = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-4">
-                  <button className="flex-1 flex items-center justify-center gap-3 py-5 bg-[#F0B429] text-black rounded-xl font-black text-xs tracking-widest uppercase hover:shadow-[0_0_30px_rgba(240,180,41,0.3)] transition-all">
+                  <button 
+                    onClick={handleAction}
+                    className="flex-1 flex items-center justify-center gap-3 py-5 bg-[#F0B429] text-black rounded-xl font-black text-xs tracking-widest uppercase hover:shadow-[0_0_30px_rgba(240,180,41,0.3)] transition-all"
+                  >
                     <ShoppingCart className="w-4 h-4" />
                     Purchase Full License
                   </button>
-                  <button className="flex-1 flex items-center justify-center gap-3 py-5 bg-[#1A2333] text-white rounded-xl font-black text-xs tracking-widest uppercase hover:bg-[#2A3343] transition-all">
+                  <button 
+                    onClick={handleAction}
+                    className="flex-1 flex items-center justify-center gap-3 py-5 bg-[#1A2333] text-white rounded-xl font-black text-xs tracking-widest uppercase hover:bg-[#2A3343] transition-all"
+                  >
                     <GitFork className="w-4 h-4" />
                     Fork & Customize
                   </button>
@@ -502,12 +502,6 @@ export const StrategyMarketplace = () => {
           </div>
         )}
       </AnimatePresence>
-      <BetaModal 
-        isOpen={isBetaModalOpen} 
-        onClose={() => setIsBetaModalOpen(false)} 
-        title={betaModalTitle}
-        source={betaSource}
-      />
     </section>
   );
 };

@@ -16,35 +16,27 @@ import {
 const pipelineSteps = [
   {
     id: "input",
-    title: "01. Strategy Intent",
-    desc: "Start in NEXUS Chat or directly in the IDE. Describe your strategy in plain English — asset, session, style, risk — and NEXUS takes it from there.",
+    title: "01. Build in NEXUS IDE",
+    desc: "Start in NEXUS Chat. Describe your strategy in plain English or raw code. NEXUS auto-checks every line for logic leaks and execution pitfalls.",
     icon: PenTool,
     color: "#F0B429",
-    details: ["NEXUS Chat input for natural‑language strategy ideas.", "Multi-asset support", "Custom indicators", "Risk parameters"]
-  },
-  {
-    id: "synthesis",
-    title: "02. Agentic Synthesis",
-    desc: "ATLAS, ECHO, and SYNTH agents build 1,000+ candidates.",
-    icon: Cpu,
-    color: "#F0B429",
-    details: ["Code generation", "Parameter optimization", "Regime detection"]
+    details: ["NLP Strategy Input", "Instant Code Generation", "Syntax & Logic Guard"]
   },
   {
     id: "validation",
-    title: "03. 8-Gate Validation",
-    desc: "Every candidate is stress-tested against historical chaos. Each surviving candidate is fully backtested and rendered as an equity and drawdown profile.",
+    title: "02. Verification Gauntlet",
+    desc: "Your idea is pushed through 24 agentic stress tests—monte carlo, noise injection, and violent cost stress. We try to kill it before you fund it.",
     icon: Beaker,
     color: "#F0B429",
-    details: ["Monte Carlo", "Walk-Forward", "Slippage models"]
+    details: ["45bps Slippage Stress", "Funding Rate Flips", "Liquidation Replays"]
   },
   {
     id: "certification",
-    title: "04. Certification",
-    desc: "The top 3% are hashed and ready for deployment. Certified strategies ship with a shareable NEXUS report — equity curve, regime breakdown, and stress results.",
+    title: "03. Get Report + Badge",
+    desc: "The survivors get an independent audit report with a 0-100 Robustness Score. Share your proof with prop firms, LPs, or your own team.",
     icon: CheckCircle,
     color: "#00E676",
-    details: ["Immutable Ledger", "API Export", "Performance Proof"]
+    details: ["Robustness Score (0-100)", "Shareable Audit Badge", "Evidence Ledger Entry"]
   }
 ];
 
@@ -61,25 +53,21 @@ const ConsoleLine = ({ text, delay = 0 }: { text: string, delay?: number }) => (
 );
 
 import { trackCTA } from '../lib/analytics';
-import { BetaModal } from './BetaModal';
-import { useState } from 'react';
 
-export const HowItWorks = () => {
-  const [isBetaModalOpen, setIsBetaModalOpen] = useState(false);
-
+export const HowItWorks = ({ onOpenWaitlist }: { onOpenWaitlist?: () => void }) => {
   const handleExportClick = () => {
     trackCTA('pipeline_export_code');
-    setIsBetaModalOpen(true);
+    onOpenWaitlist?.();
   };
 
   return (
     <section id="how" className="py-20 px-10 bg-black overflow-hidden">
     <div className="max-w-7xl mx-auto">
       <div className="text-center mb-16">
-        <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">THE PIPELINE</h2>
-        <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-8">How NEXUS builds alpha.</h3>
+        <h2 className="text-sm font-bold tracking-[0.3em] text-[#F0B429] uppercase mb-4 font-['JetBrains_Mono']">THE WORKFLOW</h2>
+        <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] font-display mb-8">Pulse of the Pipeline.</h3>
         <p className="text-[#7A8BA0] text-lg max-w-2xl mx-auto font-light">
-          We've automated the entire quant research lifecycle. What used to take a team of PhDs months now takes 3 minutes.
+          From a raw idea to a verified, fund-grade strategy in 180 seconds. Here is how NEXUS automates the entire quant research lifecycle.
         </p>
       </div>
 
@@ -223,14 +211,8 @@ export const HowItWorks = () => {
             </div>
           </div>
         </div>
-        </div>
       </div>
-      <BetaModal 
-        isOpen={isBetaModalOpen} 
-        onClose={() => setIsBetaModalOpen(false)} 
-        title="NEXUS Live Exports are in private beta."
-        source="pipeline_export_code"
-      />
+    </div>
     </section>
   );
 };

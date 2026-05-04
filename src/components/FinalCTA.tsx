@@ -52,11 +52,11 @@ export const FinalCTA = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist?: 
         </motion.div>
         
         <h2 className="text-5xl md:text-8xl font-bold text-black tracking-[-0.04em] font-display mb-8 leading-[1.0]">
-          The future of quant <br />is agentic.
+          Stop Trading Backtests. <br />Trade Proof.
         </h2>
         
         <p className="text-black/70 text-xl font-medium mb-10 max-w-2xl mx-auto">
-          Join 12,000+ quants waiting for the next batch of invites. <br />Launch: April 5, 2026.
+          Join 12,000+ quants building the future of autonomous, verified trading. <br />Launch: April 5, 2026.
         </p>
 
         <div className="max-w-xl mx-auto">
@@ -101,7 +101,7 @@ export const FinalCTA = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist?: 
                 disabled={loading}
                 className="px-8 py-4 rounded-xl bg-black text-[#F0B429] font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shrink-0 min-w-[180px]"
               >
-                {loading ? 'Joining...' : <>Join Waitlist <ArrowRight className="w-4 h-4" /></>}
+                {loading ? 'Joining...' : <>Claim Your Credits <ArrowRight className="w-4 h-4" /></>}
               </button>
             </div>
 

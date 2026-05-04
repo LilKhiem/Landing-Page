@@ -3,6 +3,7 @@ export interface SignupPayload {
   source: string;
   plan_intent: 'explorer' | 'pro' | 'institutional' | 'waitlist';
   utm?: Record<string, string>;
+  metadata?: Record<string, any>;
 }
 
 export const signup = async (payload: SignupPayload) => {
@@ -13,12 +14,11 @@ export const signup = async (payload: SignupPayload) => {
     if (val) utmParams[p] = val;
   });
 
-  const response = await fetch('https://admin.algoxpert.org/api/register', {
+  const response = await fetch('/api/signup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       ...payload,
-      source: 'NEXUS IDE WAITLIST',
       utm: { ...utmParams, ...payload.utm },
     }),
   });

@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useInView } from "motion/react";
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
-import { useFormValidation } from '../hooks/useFormValidation';
 
 const prompts = {
   "Mean Reversion": {
@@ -10,22 +8,22 @@ const prompts = {
     logs: [
       "NEXUS Chat ›",
       "You: Build a mean‑reversion strategy on USDJPY, London session only.",
-      "NEXUS: Got it. I’ll generate candidates, run IS/WFA/OOS and cost stress, then show you the equity & drawdown curves.",
+      "NEXUS: Analyzing. Most backtests ignore real slippage. I'll stress-test this.",
       "",
       "USER_PROMPT:",
-      "\"Mean reversion USDJPY, London session, target Sharpe > 2, MaxDD < 3%, min 500 trades.\"",
+      "\"Mean reversion USDJPY, London session, target Sharpe > 2, MaxDD < 3%\"",
       "",
       "AGENT_LOGS:",
-      "[ATLAS] Generating candidate hypotheses...",
+      "[ATLAS] Scanning regime shifts (2018-2026)...",
       "[ECHO] Running walk‑forward validation...",
-      "[DELTA] Stress testing x2 costs and 2020‑style crash...",
-      "[SYNTH] Aggregating gates and computing robustness score...",
+      "[DELTA] Injecting 45bps slippage & funding flips...",
+      "[SYNTH] Aggregating gates and computing robustness...",
       "",
       "VALIDATION_GATES:",
-      "IS_PASS ✓  WFA_PASS ✓  OOS_PASS ✓  COST_STRESS ✓  ROBUSTNESS 0.82",
+      "IS_PASS ✓  WFA_PASS ✓  OOS_FAIL ✗  COST_STRESS FAIL ✗",
       "",
-      "STRATEGY_CERTIFIED ✓",
-      "REPORT: Interactive equity & drawdown charts generated. Research trail stored in Evidence Ledger."
+      "NEXUS: Your strategy died in the gauntlet. Reason: Profit was 90% funding-dependent. In a regime flip, you bleed 4.5% daily.",
+      "REPORT: Kill report generated. Evidence trail stored."
     ]
   },
   "Momentum": {
@@ -33,58 +31,151 @@ const prompts = {
     logs: [
       "NEXUS Chat ›",
       "You: Create a momentum breakout strategy for BTCUSD.",
-      "NEXUS: Initializing. Scanning volatility regimes and testing breakout sensitivity across multiple timeframes.",
+      "NEXUS: Initializing. Probing parameter space for overfit signatures.",
       "",
       "USER_PROMPT:",
-      "\"momentum breakout BTCUSD, 1h timeframe, Volatility adjusted, WinRate > 60%\"",
+      "\"momentum breakout BTCUSD, 1h timeframe, Volatility adjusted\"",
       "",
       "AGENT_LOGS:",
       "[ATLAS] Scanning volatility regimes...",
-      "[ECHO] Testing breakout sensitivity...",
-      "[DELTA] Stress testing slippage 5bps...",
+      "[ECHO] Testing liquidation cascade sensitivity...",
+      "[DELTA] Stress testing slippage 5bps + Binance wick simulation...",
       "[SYNTH] Computing robustness score...",
       "",
       "VALIDATION_GATES:",
       "IS_PASS ✓  WFA_PASS ✓  OOS_PASS ✓  COST_STRESS ✓  ROBUSTNESS 0.94",
       "",
       "STRATEGY_CERTIFIED ✓",
-      "REPORT: Interactive equity & drawdown charts generated. Research trail stored in Evidence Ledger."
+      "REPORT: Interactive equity & drawdown charts generated. Certified Badge issued."
     ]
   },
   "Portfolio": {
-    text: "multi-asset portfolio, SPY/TLT/GLD, Risk Parity, Monthly rebalance",
+    text: "multi-asset portfolio, ETH/SOL/BTC, Risk Parity, Monthly rebalance",
     logs: [
       "NEXUS Chat ›",
-      "You: Optimize a multi-asset portfolio with risk parity.",
-      "NEXUS: Processing. Running historical stress scenarios and optimizing covariance matrix for SPY/TLT/GLD.",
+      "You: Optimize a multi-asset crypto portfolio.",
+      "NEXUS: Processing. Running historical stress scenarios and correlation breakdowns.",
       "",
       "USER_PROMPT:",
-      "\"multi-asset portfolio, SPY/TLT/GLD, Risk Parity, Monthly rebalance\"",
+      "\"multi-asset portfolio, ETH/SOL/BTC, Risk Parity\"",
       "",
       "AGENT_LOGS:",
       "[ATLAS] Optimizing covariance matrix...",
-      "[ECHO] Running historical stress scenarios...",
-      "[DELTA] 2008/2020 Replay stress test...",
+      "[ECHO] Running 2022/2026 Replay stress test...",
+      "[DELTA] Liquidity vacuum stress test...",
       "[SYNTH] Aggregating gates...",
       "",
       "VALIDATION_GATES:",
       "SHARPE: 1.8 | SORTINO: 2.2 | MAXDD: 8% | PASS",
       "",
       "STRATEGY_CERTIFIED ✓",
-      "REPORT: Interactive equity & drawdown charts generated. Research trail stored in Evidence Ledger."
+      "REPORT: Interactive equity & drawdown charts generated. Research trail stored."
     ]
   }
 };
 
-const Sparkline = ({ data }: { data: any[] }) => (
-  <div className="h-6 w-full mt-2 opacity-50">
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={data}>
-        <Line type="monotone" dataKey="v" stroke="#F0B429" strokeWidth={1.5} dot={false} />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
-);
+const Counter = ({ value, isVisible }: { value: string, isVisible: boolean }) => {
+  const [count, setCount] = useState(0);
+  if (typeof value !== 'string') return null;
+  const numericValue = parseInt(value.replace(/[^0-9]/g, ''));
+  const hasComma = value.includes(',');
+  const suffix = value.replace(/[0-9,]|^\$/g, '');
+  const prefix = value.startsWith('$') ? '$' : '';
+
+  useEffect(() => {
+    if (!isVisible || isNaN(numericValue)) return;
+
+    let startTime: number;
+    const duration = 2000;
+
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      
+      const currentCount = Math.floor(progress * numericValue);
+      setCount(currentCount);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+
+    requestAnimationFrame(step);
+  }, [isVisible, numericValue]);
+
+  if (isNaN(numericValue) || value === "24/7") return <span>{value}</span>;
+
+  return (
+    <span>
+      {prefix}
+      {hasComma ? count.toLocaleString() : count}
+      {suffix}
+    </span>
+  );
+};
+
+interface StatProps {
+  value: string;
+  label: string;
+  description: string;
+}
+
+const StatCard: React.FC<{ stat: StatProps, index: number }> = ({ stat, index }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <motion.div 
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.8, ease: "easeOut" }}
+      whileHover="hover"
+      className="group relative flex flex-col bg-[#0A101A] border border-[#1A2333] p-8 rounded-[2.5rem] transition-all duration-500 hover:border-[#F0B429]/40 hover:shadow-[0_0_50px_rgba(240,180,41,0.1)] h-full overflow-hidden"
+    >
+      <div className="relative mb-6">
+        <motion.div 
+          variants={{
+            hover: { 
+              scale: 1.05, 
+              filter: "drop-shadow(0 0 30px rgba(240, 180, 41, 0.8))"
+            }
+          }}
+          className="text-[#F0B429] text-5xl md:text-6xl font-black font-display tracking-tighter transition-all duration-300"
+        >
+          <Counter value={stat.value} isVisible={isInView} />
+        </motion.div>
+        
+        {/* Animated Underline */}
+        <motion.div 
+          initial={{ scaleX: 0 }}
+          variants={{
+            hover: { scaleX: 1 }
+          }}
+          className="absolute -bottom-2 left-0 right-12 h-[3px] bg-gradient-to-r from-[#F0B429] to-transparent origin-left transition-transform duration-500 ease-out"
+        />
+      </div>
+
+      <div className="text-[13px] font-black text-white uppercase tracking-[0.2em] mb-4 leading-tight group-hover:text-[#F0B429] transition-colors">
+        {stat.label}
+      </div>
+
+      <div className="text-[11px] text-[#7A8BA0] font-medium leading-relaxed group-hover:text-gray-300 transition-colors">
+        {stat.description}
+      </div>
+
+      {/* Subtle background pulse animation on hover */}
+      <motion.div 
+        variants={{
+          hover: { opacity: 1, scale: 1.4 }
+        }}
+        initial={{ opacity: 0, scale: 1 }}
+        className="absolute -bottom-24 -right-24 w-64 h-64 bg-[#F0B429]/[0.05] rounded-full blur-[80px] pointer-events-none transition-all duration-700"
+      />
+    </motion.div>
+  );
+};
 
 import { trackCTA } from '../lib/analytics';
 import { signup } from '../lib/api';
@@ -94,8 +185,6 @@ export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () =>
   const [activeTab, setActiveTab] = useState<keyof typeof prompts>("Mean Reversion");
   const [displayedLogs, setDisplayedLogs] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { email, emailError, handleEmailChange, handleSubmit } = useFormValidation();
 
   useEffect(() => {
     setDisplayedLogs([]);
@@ -113,119 +202,86 @@ export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () =>
     return () => clearInterval(interval);
   }, [activeTab]);
 
-  const onFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSubmit(async (validEmail) => {
-      setLoading(true);
-      try {
-        trackCTA('hero_get_early_access', { email: validEmail });
-        await signup({ email: validEmail, source: 'hero', plan_intent: 'waitlist' });
-        toast.success('You’re in. Check your email for your invite link.');
-        setTimeout(() => {
-          window.location.href = `/referral?ref=ALPHA_QUANT`;
-        }, 1500);
-      } catch (error) {
-        toast.error('Something went wrong. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    });
-  };
-
   return (
     <section className="relative pt-20 pb-16 px-10 overflow-hidden">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         <div className="text-left">
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 inline-block px-4 py-1 border border-[#F0B429]/30 bg-[#F0B429]/10 text-[#F0B429] text-[10px] font-bold tracking-[0.2em] uppercase rounded-full"
-          >
-            LAUNCHING APRIL 5, 2026 — JOIN THE WAITLIST
-          </motion.div>
-
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-7xl font-bold tracking-[-0.04em] leading-[1.0] mb-6 font-display"
           >
-            NEXUS IDE — 3 MINUTES. <br />
-            <span className="text-[#F0B429]">Build Certified Alpha For Any Market</span>
+            We Kill Your Strategy <br />
+            <span className="text-[#F0B429]">Before the Market Does.</span>
           </motion.h1>
 
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="max-w-xl text-[#7A8BA0] text-xl mb-10 leading-relaxed font-light"
+            className="max-w-xl text-[#E8EDF5] text-xl font-bold mb-4 leading-tight"
           >
-            The first AI IDE that turns your idea into a certified, fully backtested strategy with live equity & drawdown charts in any market.
+            Independent, Brutal Verification for Serious Crypto Quants & Prop Traders.
+          </motion.p>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="max-w-xl text-[#7A8BA0] text-lg mb-10 leading-relaxed font-medium"
+          >
+            Stop losing money on pretty backtests that fail the moment real capital is deployed. NEXUS exposes hidden weaknesses with realistic execution, regime stress, and funding simulation — so you only trade what actually survives.
           </motion.p>
 
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="w-full max-w-md flex flex-col gap-4 mb-4"
+            transition={{ delay: 0.35 }}
+            className="w-full max-w-lg flex flex-col gap-6"
           >
-            <form onSubmit={onFormSubmit} noValidate className="w-full">
-              <div className={`w-full flex p-1 bg-[#0A101A] border rounded-lg transition-all duration-300 relative ${
-                emailError 
-                  ? 'border-red-500/50 focus-within:border-red-500' 
-                  : 'border-[#1A2333] focus-within:border-[#F0B429] focus-within:shadow-[0_0_15px_rgba(240,180,41,0.2)]'
-              }`}>
-                <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => handleEmailChange(e.target.value)}
-                  placeholder="Enter your email address" 
-                  className="flex-1 bg-transparent px-4 py-3 text-sm outline-none"
-                />
-                <button 
-                  type="submit"
-                  disabled={loading}
-                  className="bg-[#F0B429] text-black px-6 py-3 rounded-md font-bold text-sm hover:opacity-90 transition-opacity active:scale-[0.98] flex items-center justify-center min-w-[160px]"
-                >
-                  {loading ? 'Joining...' : 'Join Waitlist →'}
-                </button>
-                
-                <AnimatePresence>
-                  {emailError && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-0 mt-2 flex items-center gap-1 text-red-500 text-[10px] font-bold uppercase tracking-wider"
-                    >
-                      <AlertCircle size={10} /> {emailError}
-                    </motion.div>
-                  )}
-                  {!emailError && email.length > 5 && (
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="absolute right-[160px] top-1/2 -translate-y-1/2 text-[#27C93F]"
-                    >
-                      <CheckCircle2 size={16} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </form>
-            <div className="flex items-center gap-4 mt-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button 
+                onClick={() => onOpenWaitlist()}
+                className="bg-[#F0B429] text-black px-10 py-5 rounded-2xl font-black text-sm tracking-widest uppercase hover:shadow-[0_0_50px_rgba(240,180,41,0.5)] transition-all active:scale-[0.98] flex items-center justify-center min-w-[280px]"
+              >
+                JOIN WAITLIST – GET FREE VERIFICATION CREDITS
+              </button>
               <button 
                 onClick={(e) => {
                   e.preventDefault();
-                  onOpenCheckout();
+                  toast.info("Opening Interactive Demo...");
                 }}
-                className="lemonsqueezy-button bg-transparent border border-[#1A2333] text-white px-6 py-2 rounded-md font-bold text-sm hover:border-[#F0B429] transition-colors active:scale-[0.98] flex items-center justify-center whitespace-nowrap"
+                className="bg-transparent border border-[#1A2333] text-white px-10 py-5 rounded-2xl font-bold text-sm tracking-widest uppercase hover:border-[#F0B429] transition-colors active:scale-[0.98] flex items-center justify-center whitespace-nowrap"
               >
-                Pre-order Pro
+                WATCH DEMO
               </button>
-              <p className="text-[11px] text-[#4A5568] font-['JetBrains_Mono'] uppercase tracking-widest leading-tight">
-                Free to join waitlist · Launch: April 5, 2026
-              </p>
+            </div>
+            
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-3">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-black bg-[#0A101A] flex items-center justify-center overflow-hidden">
+                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i * 123}`} alt="User" referrerPolicy="no-referrer" />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-2 w-2 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <p className="text-[11px] text-white font-bold uppercase tracking-widest">
+                      12,402 quants joined
+                    </p>
+                  </div>
+                  <p className="text-[10px] text-[#4A5568] font-['JetBrains_Mono'] mt-0.5">
+                    Verified Alpha. Zero Hallucinations.
+                  </p>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -276,13 +332,15 @@ export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () =>
                     >
                       {log === "NEXUS Chat ›" ? (
                         <span className="text-[#F0B429] font-bold">{log}</span>
-                      ) : log.startsWith("You:") ? (
+                      ) : (typeof log === 'string' && log.startsWith("You:")) ? (
                         <span className="text-white"><span className="text-[#F0B429]">You:</span> {log.replace("You:", "")}</span>
-                      ) : log.startsWith("NEXUS:") ? (
+                      ) : (typeof log === 'string' && log.startsWith("NEXUS:")) ? (
                         <span className="text-[#7A8BA0]"><span className="text-[#F0B429]">NEXUS:</span> {log.replace("NEXUS:", "")}</span>
-                      ) : log.includes('✓') || log.includes('PASSED') || log.includes('CERTIFIED') ? (
+                      ) : (typeof log === 'string' && (log.includes('✓') || log.includes('PASSED') || log.includes('CERTIFIED'))) ? (
                         <span className="text-[#27C93F]">{log}</span>
-                      ) : log.includes('[ATLAS]') || log.includes('[ECHO]') || log.includes('[DELTA]') || log.includes('[SYNTH]') ? (
+                      ) : (typeof log === 'string' && (log.includes('✗') || log.includes('FAIL') || log.includes('Kill') || log.includes('died'))) ? (
+                        <span className="text-red-500">{log}</span>
+                      ) : (typeof log === 'string' && (log.includes('[ATLAS]') || log.includes('[ECHO]') || log.includes('[DELTA]') || log.includes('[SYNTH]'))) ? (
                         <>
                           {log.split(' ').map((word, i) => 
                             ['[ATLAS]', '[ECHO]', '[DELTA]', '[SYNTH]'].includes(word) ? 
@@ -290,7 +348,7 @@ export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () =>
                             word + ' '
                           )}
                         </>
-                      ) : log.endsWith(':') ? (
+                      ) : (typeof log === 'string' && log.endsWith(':')) ? (
                         <span className="text-[#F0B429] font-bold">{log}</span>
                       ) : log}
                     </motion.div>
@@ -316,29 +374,48 @@ export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () =>
         </motion.div>
       </div>
 
-      {/* Metrics Strip as Micro-Dashboard */}
-      <div className="w-full max-w-7xl mt-20 grid grid-cols-2 md:grid-cols-5 gap-4 border-t border-[#1A2333] pt-10">
+      {/* Section Header */}
+      <div className="max-w-7xl mx-auto mt-32 mb-12 px-10">
+        <motion.h2 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-2xl md:text-3xl font-black text-white uppercase tracking-[0.2em] font-display text-center lg:text-left"
+        >
+          Battle-Tested by Thousands in <span className="text-[#F0B429]">2026 Crypto Markets</span>
+        </motion.h2>
+      </div>
+
+      {/* Metrics Strip */}
+      <div className="w-full max-w-7xl mx-auto px-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {[
-          { label: "EXPERIMENTS VALIDATED", value: "50,817", trend: [{v:10},{v:15},{v:12},{v:18},{v:25},{v:22},{v:30}], hint: "Total unique strategies tested across all market regimes." },
-          { label: "KILL RATE", value: "97%", trend: [{v:95},{v:96},{v:97},{v:97},{v:98},{v:97},{v:97}], hint: "97% of tested ideas never reach certification – by design." },
-          { label: "CERTIFIED CHAMPIONS", value: "11", trend: [{v:2},{v:3},{v:5},{v:6},{v:8},{v:9},{v:11}], hint: "Institutional-grade strategies currently in live deployment." },
-          { label: "IDEA → CERTIFIED", value: "3 min", trend: [{v:10},{v:8},{v:7},{v:5},{v:4},{v:3},{v:3}], hint: "Average time from plain English prompt to certified result." },
-          { label: "REPLACED AT", value: "$99/MO", trend: [{v:50},{v:50},{v:50},{v:50},{v:50},{v:50},{v:50}], hint: "Replaces a $500K/year quant team for the cost of a SaaS subscription." }
+          { 
+            value: "50,817", 
+            label: "EXPERIMENTS VALIDATED", 
+            description: "Real strategies brutally tested across perps, funding regimes, and live-like execution conditions." 
+          },
+          { 
+            value: "97%", 
+            label: "KILL RATE", 
+            description: "By design. 97% of tested ideas are eliminated before they can destroy capital." 
+          },
+          { 
+            value: "11", 
+            label: "CERTIFIED CHAMPIONS", 
+            description: "Institutional-grade strategies currently surviving live deployment in today’s volatile markets." 
+          },
+          { 
+            value: "24/7", 
+            label: "R&D VALIDATION LOOP", 
+            description: "Continuous regime monitoring, execution simulation, and robustness re-testing — so your edge never goes blind." 
+          },
+          { 
+            value: "$19/MO", 
+            label: "REPLACED AT", 
+            description: "The average monthly cost of prop failures, blown accounts, and dead strategies we help you avoid." 
+          }
         ].map((stat, i) => (
-          <motion.div 
-            key={i} 
-            whileHover={{ y: -5 }}
-            className="bg-[#0A101A] border border-[#1A2333] p-5 rounded-xl hover:border-[#F0B429]/50 transition-all group relative"
-          >
-            <div className="text-[#F0B429] text-3xl font-bold font-display mb-1 tracking-tight">{stat.value}</div>
-            <div className="text-[9px] text-[#4A5568] font-bold tracking-widest uppercase leading-tight mb-2">{stat.label}</div>
-            <Sparkline data={stat.trend} />
-            
-            {/* Tooltip */}
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-[#0D1521] border border-[#1A2333] rounded-lg text-[10px] text-[#7A8BA0] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-xl">
-              {stat.hint}
-            </div>
-          </motion.div>
+          <StatCard key={i} stat={stat} index={i} />
         ))}
       </div>
     </section>
