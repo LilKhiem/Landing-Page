@@ -35,9 +35,9 @@ const gauntletStages = [
     id: 'overfitting',
     title: "Overfitting Attack (C.M.I.O.)",
     icon: Cpu,
-    desc: "Cross-Market Influence Optimization. We use 'Agentic Noise Injection' to try and break your logic. If your alpha only lives in a hand-picked parameter window, we expose the curve-fitting before the market does.",
-    visual: "3D parameter landscape turning into a 'shattered glass' effect as noise is injected.",
-    rules: ["Probabilistic Sharpe Filter: > 95% Confidence", "Parameter Sensitivity Floor: < 1.5% Var", "Noise Resistance Threshold: 80%"]
+    desc: "Cross-Market Influence Optimization. We deploy 'Agentic Noise Injection'—LLM-driven agents that scan your logic for hyper-parameter sensitivities, synthetic arbitrage loops, and curve-fitting traps. We don't just test your data; we actively try to exploit your code's hidden assumptions until it breaks.",
+    visual: "Parameter Landscape Shatter: Your equity curve fragments into shards as noise agents exploit sensitivities.",
+    rules: ["Probabilistic Sharpe Filter: > 95% Confidence", "Agentic Sensitivity Audit: 50+ Parameter Probes", "Synthetic Noise Floor: 15% Variance", "Curve-Fitting Resistance: 80% Min"]
   },
   {
     id: 'regime',
@@ -51,9 +51,9 @@ const gauntletStages = [
     id: 'portfolio',
     title: "Tail Risk & Correlation",
     icon: TrendingDown,
-    desc: "Most quants underestimate 'everything-goes-to-zero' correlations. We stress-test your strategy inside a multi-asset portfolio context to ensure it doesn't just add tail risk.",
-    visual: "Heatmap of 50 assets flashing bright red then showing the strategy's survival path.",
-    rules: ["Asset-Specific Correlation Ceiling: 0.4", "Tail-End VaR Constraint: 99.9%", "Portfolio Volatility Contribution: < 5%"]
+    desc: "Most quants underestimate 'everything-goes-to-zero' correlations. We enforce an 'Asset-Specific Correlation Ceiling' (0.4) to ensure your alpha isn't just a hidden bet on USD liquidity or ETH beta. If breached, we trigger a 'Contagion Cascade'—a simulation where correlated assets decouple and then dump simultaneously, exposing strategies that rely on false diversification.",
+    visual: "Correlation Matrix Stress-Test: Watch the 'Ceiling' breach as assets couple during a liquidity vacuum.",
+    rules: ["Asset-Specific Correlation Ceiling: 0.4", "Contagion Cascade Replay: 85% Systemic VaR", "Max Factor Exposure (USD/ETH): < 30%", "Portfolio Volatility Contribution: < 5%"]
   }
 ];
 
@@ -181,52 +181,298 @@ export const VerificationGauntlet = ({ onOpenWaitlist }: { onOpenWaitlist?: () =
                   </div>
 
                   {/* Stage-Specific Mock UI */}
-                  <div className="relative text-center px-10">
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="text-[11px] text-[#F0B429] font-['JetBrains_Mono'] mb-10 uppercase tracking-[0.4em]"
-                    >
-                      [ {gauntletStages[activeStage].visual} ]
-                    </motion.div>
-                    
-                    <div className="flex flex-col items-center gap-10">
-                      <div className="relative">
-                        <motion.div 
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                          className="w-48 h-48 border border-dashed border-[#F0B429]/30 rounded-full flex items-center justify-center"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <motion.div 
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="w-32 h-32 bg-gradient-to-br from-[#F0B429]/20 to-transparent border border-[#F0B429]/50 rounded-full flex items-center justify-center backdrop-blur-md"
-                          >
-                             <ActiveIcon className="w-10 h-10 text-[#F0B429]" />
-                          </motion.div>
-                        </div>
-                        {/* Orbiting dots */}
-                        <motion.div 
-                          animate={{ rotate: -360 }}
-                          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                          className="absolute inset-0"
+                  <div className="relative w-full h-full flex flex-col items-center justify-center px-10">
+                    <AnimatePresence mode="wait">
+                      {gauntletStages[activeStage].id === 'execution' ? (
+                        <motion.div
+                          key="execution-visual"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="w-full h-full flex flex-col items-center justify-center relative"
                         >
-                           <div className="absolute -top-1 left-1/2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_#f00]" />
+                          <div className="grid grid-cols-2 w-full h-[300px] border border-[#1A2333] rounded-2xl overflow-hidden bg-[#050709]">
+                            {/* Left side: Optimistic */}
+                            <div className="border-r border-[#1A2333] flex flex-col p-4 relative overflow-hidden">
+                              <div className="text-[10px] text-green-500 font-bold uppercase tracking-wider mb-4 border-b border-green-500/20 pb-2">OPTIMISTIC BACKTEST FILL</div>
+                              <div className="flex-1 flex flex-col gap-2">
+                                  {[...Array(8)].map((_, i) => (
+                                      <motion.div 
+                                          key={i}
+                                          initial={{ x: -20, opacity: 0 }}
+                                          animate={{ x: 0, opacity: 1 }}
+                                          transition={{ delay: i * 0.1, duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
+                                          className="flex justify-between items-center text-[10px] font-['JetBrains_Mono']"
+                                      >
+                                          <span className="text-gray-500">ENTRY @ 64,230.00</span>
+                                          <span className="text-green-500">FILLED 100%</span>
+                                      </motion.div>
+                                  ))}
+                              </div>
+                              <div className="absolute inset-0 bg-green-500/5 pointer-events-none" />
+                            </div>
+
+                            {/* Right side: Reality */}
+                            <div className="flex flex-col p-4 relative overflow-hidden">
+                              <div className="text-[10px] text-red-500 font-bold uppercase tracking-wider mb-4 border-b border-red-500/20 pb-2">REALITY-DECIMATED SLIP</div>
+                              <div className="flex-1 flex flex-col gap-2">
+                                  {[...Array(8)].map((_, i) => (
+                                      <motion.div 
+                                          key={i}
+                                          initial={{ x: -20, opacity: 0 }}
+                                          animate={{ x: [0, 5, 0], opacity: 1 }}
+                                          transition={{ delay: i * 0.12, duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
+                                          className="flex justify-between items-center text-[10px] font-['JetBrains_Mono']"
+                                      >
+                                          <span className="text-gray-500">ENTRY @ 64,271.65</span>
+                                          <span className="text-red-500 font-bold">-65.2 BPS</span>
+                                      </motion.div>
+                                  ))}
+                              </div>
+                              <div className="absolute inset-0 bg-red-500/5 pointer-events-none" />
+                              {/* Slippage alert overlay */}
+                              <motion.div 
+                                  animate={{ opacity: [0, 1, 0] }}
+                                  transition={{ duration: 1, repeat: Infinity }}
+                                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 py-1 bg-red-600/20 border border-red-600 text-red-500 text-[10px] font-black uppercase rotate-[-15deg] pointer-events-none"
+                              >
+                                  MARKET IMPACT DETECTED
+                              </motion.div>
+                            </div>
+                          </div>
+                          <div className="mt-6 flex justify-between w-full max-w-lg">
+                              <div className="text-center">
+                                  <div className="text-[8px] text-[#7A8BA0] uppercase font-bold mb-1 tracking-widest">Expected PnL</div>
+                                  <div className="text-sm font-black text-green-500">+$2,450.00</div>
+                              </div>
+                              <div className="w-px h-8 bg-[#1A2333]" />
+                              <div className="text-center">
+                                  <div className="text-[8px] text-[#7A8BA0] uppercase font-bold mb-1 tracking-widest">Actual PnL (Post-Slippage)</div>
+                                  <div className="text-sm font-black text-red-500">-$1,840.12</div>
+                              </div>
+                          </div>
                         </motion.div>
-                      </div>
-                      
-                      <div className="flex gap-3">
-                         {[1,2,3,4,5,6].map(i => (
-                           <motion.div 
-                             key={i}
-                             animate={{ height: [4, 12, 4] }}
-                             transition={{ duration: 1, repeat: Infinity, delay: i * 0.1 }}
-                             className="w-1.5 bg-[#F0B429] rounded-full" 
-                           />
-                         ))}
-                      </div>
-                    </div>
+                      ) : gauntletStages[activeStage].id === 'regime' ? (
+                        <motion.div
+                          key="regime-visual"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="w-full h-full flex flex-col items-center justify-center p-10 bg-[#0A0D12]/50 border border-[#1A2333] rounded-2xl relative overflow-hidden"
+                        >
+                          <div className="absolute top-4 left-4 flex gap-4 text-[9px] font-['JetBrains_Mono'] text-[#7A8BA0]">
+                            <div className="flex items-center gap-1">
+                              <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /> SYSTEM STRESS: CRITICAL
+                            </div>
+                            <div>REPLAY: FTX_CONT_EVENT_2022_X</div>
+                          </div>
+                          
+                          <div className="w-full h-[150px] relative mt-4">
+                            {/* ECG / Heart Rate Line */}
+                            <svg viewBox="0 0 400 150" className="w-full h-full">
+                              <motion.path
+                                d="M 0 75 L 50 75 L 60 40 L 70 110 L 80 75 L 130 75 L 140 20 L 150 130 L 160 75 L 210 75 L 220 10 L 230 140 L 240 75 L 290 75 L 400 75"
+                                fill="none"
+                                stroke="#F0B429"
+                                strokeWidth="2"
+                                initial={{ pathLength: 0 }}
+                                animate={{ 
+                                  pathLength: [0, 0.7, 0.7, 1],
+                                  opacity: [1, 1, 0.3, 0.1]
+                                }}
+                                transition={{ 
+                                  duration: 6, 
+                                  repeat: Infinity, 
+                                  times: [0, 0.5, 0.6, 1],
+                                  ease: "linear"
+                                }}
+                              />
+                              {/* Grid lines */}
+                              {[...Array(10)].map((_, i) => (
+                                <line 
+                                  key={i} 
+                                  x1={i * 40} y1="0" x2={i * 40} y2="150" 
+                                  stroke="#1A2333" strokeWidth="1" 
+                                />
+                              ))}
+                              {[...Array(4)].map((_, i) => (
+                                <line 
+                                  key={i} 
+                                  x1="0" y1={i * 50} x2="400" y2={i * 50} 
+                                  stroke="#1A2333" strokeWidth="1" 
+                                />
+                              ))}
+                            </svg>
+                            
+                            {/* The "Flatline" text */}
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: [0, 0, 1, 0] }}
+                              transition={{ duration: 6, repeat: Infinity, times: [0, 0.6, 0.7, 1] }}
+                              className="absolute top-1/2 left-3/4 -translate-y-1/2 text-red-500 font-black text-xs tracking-tighter"
+                            >
+                              STRATEGY FAILURE DETECTED.
+                            </motion.div>
+                          </div>
+
+                          <div className="w-full grid grid-cols-3 gap-6 mt-10">
+                            {[
+                              { label: 'EQUITY SURVIVAL', val: '0.00%', color: 'text-red-500' },
+                              { label: 'LIQUIDITY PREMIUM', val: '+450%', color: 'text-white' },
+                              { label: 'ALPHA DECAY', val: 'INSTANT', color: 'text-red-500' }
+                            ].map((stat, i) => (
+                              <div key={i} className="text-center border border-[#1A2333] p-2 rounded bg-black/40">
+                                <div className="text-[7px] text-[#7A8BA0] uppercase font-bold mb-1">{stat.label}</div>
+                                <div className={`text-xs font-black ${stat.color}`}>{stat.val}</div>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="absolute inset-0 border-[4px] border-red-500/20 animate-pulse pointer-events-none" />
+                        </motion.div>
+                      ) : gauntletStages[activeStage].id === 'portfolio' ? (
+                        <motion.div
+                          key="portfolio-visual"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="w-full max-w-2xl flex flex-col items-center"
+                        >
+                          <div className="grid grid-cols-8 gap-2 mb-8">
+                            {[...Array(32)].map((_, i) => (
+                              <motion.div
+                                key={i}
+                                animate={{ 
+                                  backgroundColor: i % 7 === 0 ? ['#1A2333', '#f00', '#1A2333'] : '#1A2333',
+                                  opacity: i % 7 === 0 ? [0.4, 1, 0.4] : 0.2
+                                }}
+                                transition={{ duration: 2, repeat: Infinity, delay: i * 0.05 }}
+                                className="w-8 h-8 rounded-sm border border-white/5"
+                              />
+                            ))}
+                          </div>
+                          <div className="w-full h-2 bg-gray-900 rounded-full overflow-hidden mb-4 relative">
+                            <motion.div 
+                              animate={{ width: ['20%', '85%', '20%'] }}
+                              transition={{ duration: 4, repeat: Infinity }}
+                              className="h-full bg-[#f00] shadow-[0_0_10px_#f00]"
+                            />
+                            <div className="absolute left-[40%] top-0 bottom-0 w-px bg-[#F0B429] z-10">
+                              <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-[8px] text-[#F0B429] font-bold">CEILING (0.4)</span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between w-full text-[9px] font-['JetBrains_Mono'] text-white/50">
+                            <span>CORRELATION STATUS: <span className="text-red-500 animate-pulse">BREACHED</span></span>
+                            <span>CONTAGION CASCADE: ACTIVE</span>
+                          </div>
+                        </motion.div>
+                      ) : gauntletStages[activeStage].id === 'overfitting' ? (
+                        <motion.div
+                          key="overfitting-visual"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="w-full h-full flex flex-col items-center justify-center"
+                        >
+                          <div className="relative w-64 h-64 overflow-visible">
+                            {/* The "Landscape" pieces */}
+                            {[...Array(12)].map((_, i) => (
+                              <motion.div
+                                key={i}
+                                initial={{ 
+                                  x: 0, 
+                                  y: 0, 
+                                  rotate: 0, 
+                                  opacity: 0.8,
+                                  scale: 1
+                                }}
+                                animate={{ 
+                                  x: [0, (Math.random() - 0.5) * 400], 
+                                  y: [0, (Math.random() - 0.5) * 400], 
+                                  rotate: [0, Math.random() * 720],
+                                  opacity: [0.8, 0],
+                                  scale: [1, 0.5]
+                                }}
+                                transition={{ 
+                                  duration: 3, 
+                                  repeat: Infinity, 
+                                  repeatDelay: 1,
+                                  ease: "easeInOut"
+                                }}
+                                className="absolute inset-0 bg-[#F0B429]/20 border border-[#F0B429] backdrop-blur-sm"
+                                style={{
+                                  clipPath: `polygon(${Math.random()*100}% ${Math.random()*100}%, ${Math.random()*100}% ${Math.random()*100}%, ${Math.random()*100}% ${Math.random()*100}%)`
+                                }}
+                              />
+                            ))}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <motion.div
+                                animate={{ scale: [1, 1.2, 1], opacity: [1, 0.5, 1] }}
+                                transition={{ duration: 0.2, repeat: Infinity, repeatDelay: 3.8 }}
+                              >
+                                <Skull className="w-16 h-16 text-red-500 shadow-[0_0_20px_red]" />
+                              </motion.div>
+                            </div>
+                          </div>
+                          <div className="mt-8 text-center">
+                            <div className="text-[10px] text-red-500 font-bold tracking-[0.3em] mb-2 animate-pulse">AGENTIC NOISE INJECTION DETECTED</div>
+                            <div className="text-[11px] text-[#cecece] font-['JetBrains_Mono']">PARAMETER ATTACK: HARDS_PARAM_7B_STRESS</div>
+                          </div>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="default-visual"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="flex flex-col items-center"
+                        >
+                          <motion.div
+                            className="text-[11px] text-[#F0B429] font-['JetBrains_Mono'] mb-10 uppercase tracking-[0.4em]"
+                          >
+                            [ {gauntletStages[activeStage].visual} ]
+                          </motion.div>
+                          
+                          <div className="flex flex-col items-center gap-10">
+                            <div className="relative">
+                              <motion.div 
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                                className="w-48 h-48 border border-dashed border-[#F0B429]/30 rounded-full flex items-center justify-center"
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <motion.div 
+                                  initial={{ scale: 0.8, opacity: 0 }}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  className="w-32 h-32 bg-gradient-to-br from-[#F0B429]/20 to-transparent border border-[#F0B429]/50 rounded-full flex items-center justify-center backdrop-blur-md"
+                                >
+                                   <ActiveIcon className="w-10 h-10 text-[#F0B429]" />
+                                </motion.div>
+                              </div>
+                              {/* Orbiting dots */}
+                              <motion.div 
+                                animate={{ rotate: -360 }}
+                                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-0"
+                              >
+                                 <div className="absolute -top-1 left-1/2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_#f00]" />
+                              </motion.div>
+                            </div>
+                            
+                            <div className="flex gap-3">
+                               {[1,2,3,4,5,6].map(i => (
+                                 <motion.div 
+                                   key={i}
+                                   animate={{ height: [4, 12, 4] }}
+                                   transition={{ duration: 1, repeat: Infinity, delay: i * 0.1 }}
+                                   className="w-1.5 bg-[#F0B429] rounded-full" 
+                                 />
+                               ))}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
 
