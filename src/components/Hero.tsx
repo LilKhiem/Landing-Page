@@ -1,78 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "motion/react";
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
-
-const prompts = {
-  "Mean Reversion": {
-    text: "mean reversion USDJPY, London session, target Sharpe > 2, MaxDD < 3%, min 500 trades.",
-    logs: [
-      "NEXUS Chat ›",
-      "You: Build a mean‑reversion strategy on USDJPY, London session only.",
-      "NEXUS: Analyzing. Most backtests ignore real slippage. I'll stress-test this.",
-      "",
-      "USER_PROMPT:",
-      "\"Mean reversion USDJPY, London session, target Sharpe > 2, MaxDD < 3%\"",
-      "",
-      "AGENT_LOGS:",
-      "[ATLAS] Scanning regime shifts (2018-2026)...",
-      "[ECHO] Running walk‑forward validation...",
-      "[DELTA] Injecting 45bps slippage & funding flips...",
-      "[SYNTH] Aggregating gates and computing robustness...",
-      "",
-      "VALIDATION_GATES:",
-      "IS_PASS ✓  WFA_PASS ✓  OOS_FAIL ✗  COST_STRESS FAIL ✗",
-      "",
-      "NEXUS: Your strategy died in the gauntlet. Reason: Profit was 90% funding-dependent. In a regime flip, you bleed 4.5% daily.",
-      "REPORT: Kill report generated. Evidence trail stored."
-    ]
-  },
-  "Momentum": {
-    text: "momentum breakout BTCUSD, 1h timeframe, Volatility adjusted, WinRate > 60%",
-    logs: [
-      "NEXUS Chat ›",
-      "You: Create a momentum breakout strategy for BTCUSD.",
-      "NEXUS: Initializing. Probing parameter space for overfit signatures.",
-      "",
-      "USER_PROMPT:",
-      "\"momentum breakout BTCUSD, 1h timeframe, Volatility adjusted\"",
-      "",
-      "AGENT_LOGS:",
-      "[ATLAS] Scanning volatility regimes...",
-      "[ECHO] Testing liquidation cascade sensitivity...",
-      "[DELTA] Stress testing slippage 5bps + Binance wick simulation...",
-      "[SYNTH] Computing robustness score...",
-      "",
-      "VALIDATION_GATES:",
-      "IS_PASS ✓  WFA_PASS ✓  OOS_PASS ✓  COST_STRESS ✓  ROBUSTNESS 0.94",
-      "",
-      "STRATEGY_CERTIFIED ✓",
-      "REPORT: Interactive equity & drawdown charts generated. Certified Badge issued."
-    ]
-  },
-  "Portfolio": {
-    text: "multi-asset portfolio, ETH/SOL/BTC, Risk Parity, Monthly rebalance",
-    logs: [
-      "NEXUS Chat ›",
-      "You: Optimize a multi-asset crypto portfolio.",
-      "NEXUS: Processing. Running historical stress scenarios and correlation breakdowns.",
-      "",
-      "USER_PROMPT:",
-      "\"multi-asset portfolio, ETH/SOL/BTC, Risk Parity\"",
-      "",
-      "AGENT_LOGS:",
-      "[ATLAS] Optimizing covariance matrix...",
-      "[ECHO] Running 2022/2026 Replay stress test...",
-      "[DELTA] Liquidity vacuum stress test...",
-      "[SYNTH] Aggregating gates...",
-      "",
-      "VALIDATION_GATES:",
-      "SHARPE: 1.8 | SORTINO: 2.2 | MAXDD: 8% | PASS",
-      "",
-      "STRATEGY_CERTIFIED ✓",
-      "REPORT: Interactive equity & drawdown charts generated. Research trail stored."
-    ]
-  }
-};
+import { 
+  AlertCircle, 
+  CheckCircle2, 
+  Skull, 
+  TrendingUp, 
+  TrendingDown, 
+  Zap, 
+  ArrowDownRight, 
+  ShieldAlert, 
+  Search, 
+  Activity 
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 const Counter = ({ value, isVisible }: { value: string, isVisible: boolean }) => {
   const [count, setCount] = useState(0);
@@ -165,7 +105,6 @@ const StatCard: React.FC<{ stat: StatProps, index: number }> = ({ stat, index })
         {stat.description}
       </div>
 
-      {/* Subtle background pulse animation on hover */}
       <motion.div 
         variants={{
           hover: { opacity: 1, scale: 1.4 }
@@ -177,31 +116,246 @@ const StatCard: React.FC<{ stat: StatProps, index: number }> = ({ stat, index })
   );
 };
 
-import { trackCTA } from '../lib/analytics';
-import { signup } from '../lib/api';
-import { toast } from 'sonner';
+const RealityComparison = () => {
+  return (
+    <div className="relative w-full aspect-[4/5] bg-[#05070A] border border-[#1A2333] rounded-[3rem] overflow-hidden shadow-2xl shadow-[#F0B429]/5">
+      {/* Background Grid & Candlesticks (Overall) */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+        <div className="grid grid-cols-12 h-full w-full">
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="border-r border-[#7A8BA0] h-full flex flex-col justify-end p-1">
+              <div className="w-full bg-[#7A8BA0] opacity-20" style={{ height: `${Math.random() * 40 + 10}%` }} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Top Half: Beautiful Backtest */}
+      <div className="h-1/2 relative border-b border-[#1A2333] bg-gradient-to-b from-[#0A101A] to-transparent overflow-hidden">
+        {/* Subtle Candlestick Background */}
+        <div className="absolute inset-0 opacity-[0.04] flex items-center justify-around px-4">
+          {[...Array(20)].map((_, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <div className="w-px h-12 bg-green-500" />
+              <div className="w-2 h-6 bg-green-500 rounded-sm" />
+            </div>
+          ))}
+        </div>
+
+        <div className="absolute top-8 left-10 z-10 text-left">
+          <div className="text-[10px] text-[#F0B429] font-black uppercase tracking-[0.3em] mb-2">THE BEAUTIFUL LIE</div>
+          <h3 className="text-3xl font-black text-white font-display uppercase tracking-tight">BACKTEST</h3>
+        </div>
+
+        <div className="absolute top-8 right-10 z-10 flex gap-6">
+          {[
+            { label: 'SHARPE', val: '2.8', color: 'text-green-400' },
+            { label: 'WIN RATE', val: '68%', color: 'text-white' },
+            { label: 'MAX DD', val: '-8%', color: 'text-white' }
+          ].map((m, i) => (
+            <div key={i} className="text-right">
+              <div className="text-[9px] text-[#7A8BA0] font-black uppercase tracking-wider mb-0.5">{m.label}</div>
+              <div className={`text-sm font-black font-mono ${m.color}`}>{m.val}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Smooth Equity Curve (Top) */}
+        <svg viewBox="0 0 400 200" className="absolute bottom-0 left-0 w-full h-[160px]">
+          <motion.path
+            d="M 0 180 Q 40 170 80 155 T 160 130 T 240 100 T 320 60 T 400 30"
+            fill="none"
+            stroke="#10B981"
+            strokeWidth="4"
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 2.5, ease: "easeInOut" }}
+          />
+          <motion.path
+            d="M 0 180 Q 40 170 80 155 T 160 130 T 240 100 T 320 60 T 400 30 L 400 200 L 0 200 Z"
+            fill="url(#greenGradient)"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.15 }}
+            transition={{ duration: 2 }}
+          />
+          <defs>
+            <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#10B981" />
+              <stop offset="100%" stopColor="transparent" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        {/* Floating Badges (Top) */}
+        <motion.div 
+          animate={{ y: [0, -8, 0], opacity: [0.7, 1, 0.7] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/2 right-[15%] bg-[#0D1521]/80 backdrop-blur-md border border-green-500/40 px-4 py-2 rounded-full flex items-center gap-2.5 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+        >
+          <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_12px_#10B981]" />
+          <span className="text-[10px] text-green-400 font-black uppercase tracking-[0.2em]">OPTIMIZED EDGE</span>
+        </motion.div>
+      </div>
+
+      {/* Center Transition Element */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.1, 1],
+            rotate: [0, 3, -3, 0]
+          }}
+          transition={{ duration: 5, repeat: Infinity }}
+          className="relative group cursor-pointer"
+        >
+          <div className="absolute -inset-6 bg-[#F0B429]/25 blur-2xl rounded-full animate-pulse" />
+          <div className="relative bg-[#05070A] border-[3px] border-[#F0B429] p-5 rounded-full flex flex-col items-center justify-center shadow-[0_0_40px_rgba(240,180,41,0.4)]">
+            <Skull className="w-10 h-10 text-[#F0B429] mb-1.5" />
+            <div className="text-[10px] text-[#F0B429] font-black uppercase text-center tracking-tighter leading-none">
+              NEXUS<br />VERIFIED
+            </div>
+          </div>
+          
+          <div className="absolute left-full ml-6 top-1/2 -translate-y-1/2 whitespace-nowrap hidden lg:block group-hover:scale-105 transition-transform">
+            <div className="bg-[#1A2333]/90 backdrop-blur-xl border-2 border-[#F0B429]/40 px-5 py-3 rounded-2xl shadow-xl">
+              <div className="text-[12px] text-[#F0B429] font-black uppercase tracking-widest mb-1">Killed by Real Market Conditions</div>
+              <div className="text-[10px] text-[#E8EDF5] font-['JetBrains_Mono'] opacity-80 italic">Overfit artifacts purged from logic.</div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Bottom Half: Brutal Reality */}
+      <div className="h-1/2 relative bg-[#05070A] overflow-hidden">
+        {/* Subtle Red Volatility Background */}
+        <div className="absolute inset-x-0 top-0 h-full opacity-[0.05] pointer-events-none">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full fill-red-600">
+            {[...Array(15)].map((_, i) => (
+              <rect key={i} x={i * 7} y={Math.random() * 50 + 50} width="2" height={Math.random() * 30 + 10} />
+            ))}
+          </svg>
+        </div>
+
+        <div className="absolute bottom-20 left-10 z-10 text-left">
+          <div className="text-[10px] text-red-500 font-black uppercase tracking-[0.3em] mb-2">THE BRUTAL TRUTH</div>
+          <h3 className="text-3xl font-black text-red-500 font-display uppercase tracking-tight">LIVE REALITY</h3>
+        </div>
+
+        {/* Aggressive Crashing Curve (Bottom) */}
+        <svg viewBox="0 0 400 200" className="absolute top-0 left-0 w-full h-full">
+          <motion.path
+            d="M 0 0 L 80 25 L 120 18 L 160 45 L 180 140 L 220 125 L 280 185 L 400 195"
+            fill="none"
+            stroke="#EF4444"
+            strokeWidth="4"
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 2, delay: 1, ease: "anticipate" }}
+          />
+          <motion.path
+            d="M 0 0 L 80 25 L 120 18 L 160 45 L 180 140 L 220 125 L 280 185 L 400 195 L 400 0 L 0 0 Z"
+            fill="url(#redGradient)"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.15 }}
+            transition={{ duration: 1.5, delay: 1.5 }}
+          />
+          <defs>
+            <linearGradient id="redGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#EF4444" />
+              <stop offset="100%" stopColor="transparent" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        {/* High-Impact Failure Points */}
+        {[
+          { x: '165px', y: '45px', label: 'FUNDING RATE FLIP', sub: '-41% in 11 days' },
+          { x: '215px', y: '125px', label: '45BPS SLIPPAGE', sub: 'Impact: $42k/exec' },
+          { x: '275px', y: '180px', label: 'REGIME SHIFT', sub: 'Model Drift: CRITICAL' }
+        ].map((ann, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 2.5 + i * 0.4, type: "spring", stiffness: 200 }}
+            style={{ left: ann.x, top: ann.y }}
+            className="absolute z-10"
+          >
+            <div className="relative">
+              <div className="absolute -inset-4 bg-red-600/30 rounded-full animate-ping" />
+              <div className="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_15px_#EF4444] border-2 border-white" />
+              <div className="absolute left-6 top-1/2 -translate-y-1/2 whitespace-nowrap">
+                <div className="bg-black/90 backdrop-blur-md border border-red-500/50 p-2 rounded shadow-2xl">
+                  <div className="text-[9px] text-red-500 font-black uppercase tracking-tighter leading-none mb-1">
+                    {ann.label}
+                  </div>
+                  <div className="text-[8px] text-white font-mono opacity-80 leading-none">
+                    {ann.sub}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+
+        {/* Aggressive Death Text */}
+        <motion.div 
+          animate={{ opacity: [0, 0.4, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute bottom-28 right-16 z-10 pointer-events-none"
+        >
+          <div className="text-red-700 font-black text-6xl tracking-tighter uppercase rotate-[-8deg] italic">
+            STRATEGY DIED HERE
+          </div>
+        </motion.div>
+
+        {/* Fail Badges (Bottom) */}
+        <div className="absolute bottom-24 right-10 flex flex-col gap-2.5 scale-90 lg:scale-100 items-end">
+          {[
+            { label: 'OVERFIT DETECTED', icon: ShieldAlert },
+            { label: 'EXECUTION FAILED', icon: AlertCircle },
+            { label: 'REGIME VULNERABLE', icon: Search }
+          ].map((b, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 3.5 + i * 0.2 }}
+              className="bg-red-950/60 border-2 border-red-500/30 px-4 py-2 rounded-xl flex items-center gap-3 backdrop-blur-md shadow-lg"
+            >
+              <b.icon className="w-4 h-4 text-red-500" />
+              <span className="text-[10px] text-red-400 font-black uppercase tracking-[0.2em]">{b.label}</span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Premium Analysis Bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-14 border-t-2 border-[#1A2333] bg-[#0A101A] px-8 flex items-center justify-between z-30">
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col">
+            <span className="text-[9px] text-[#7A8BA0] font-black uppercase tracking-widest leading-none mb-1">ROBUSTNESS SCORE</span>
+            <span className="text-xl font-black text-red-500 font-mono tracking-tighter leading-none animate-pulse">21 / 100</span>
+          </div>
+          <div className="h-8 w-px bg-[#1A2333]" />
+          <div className="flex flex-col">
+            <span className="text-[9px] text-[#7A8BA0] font-black uppercase tracking-widest leading-none mb-1">PREDICTION CONFIDENCE</span>
+            <span className="text-sm font-black text-[#F0B429] font-mono leading-none">LOW - HIGH VARIANCE</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 px-3 py-1.5 rounded-lg">
+            <Activity className="w-3.5 h-3.5 text-red-500 animate-pulse" />
+            <span className="text-[10px] text-white font-black uppercase tracking-widest">REALITY DECIMATED REPORT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () => void, onOpenCheckout: () => void }) => {
-  const [activeTab, setActiveTab] = useState<keyof typeof prompts>("Mean Reversion");
-  const [displayedLogs, setDisplayedLogs] = useState<string[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
-
-  useEffect(() => {
-    setDisplayedLogs([]);
-    setIsTyping(true);
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < prompts[activeTab].logs.length) {
-        setDisplayedLogs(prev => [...prev, prompts[activeTab].logs[i]]);
-        i++;
-      } else {
-        setIsTyping(false);
-        clearInterval(interval);
-      }
-    }, 600);
-    return () => clearInterval(interval);
-  }, [activeTab]);
-
   return (
     <section className="relative pt-20 pb-16 px-10 overflow-hidden">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
@@ -210,28 +364,29 @@ export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () =>
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-7xl font-bold tracking-[-0.04em] leading-[1.0] mb-6 font-display"
+            className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-[-0.04em] leading-[1.1] mb-6 font-display"
           >
-            We Kill Your Strategy <br />
-            <span className="text-[#F0B429]">Before the Market Does.</span>
+            AI Floods Market with <br />
+            Beautiful Backtest<br />
+            <span className="text-[#F0B429] mt-2 block text-left">NEXUS Verifies Which Ones Deserve Capital.</span>
           </motion.h1>
 
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="max-w-xl text-[#E8EDF5] text-xl font-bold mb-4 leading-tight"
+            className="max-w-xl text-[#E8EDF5] text-xl font-bold mb-4 leading-tight text-left"
           >
-            Independent, Brutal Verification for Serious Crypto Quants & Prop Traders.
+            Independent, Brutal Verification & Trust Layer for Serious Crypto Quants & Prop Traders.
           </motion.p>
 
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="max-w-xl text-[#7A8BA0] text-lg mb-10 leading-relaxed font-medium"
+            className="max-w-xl text-[#7A8BA0] text-lg mb-10 leading-relaxed font-medium text-left"
           >
-            Stop losing money on pretty backtests that fail the moment real capital is deployed. NEXUS exposes hidden weaknesses with realistic execution, regime stress, and funding simulation — so you only trade what actually survives.
+            Stop burning capital on pretty backtests that collapse under live market risk. AI makes strategy creation cheap — but markets punish weakness with real losses. NEXUS is the ruthless verification layer: exposing hidden fragility with execution reality, regime stress, and funding simulation. Only strategies that survive our kill‑tests deserve capital.
           </motion.p>
 
           <motion.div 
@@ -267,7 +422,7 @@ export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () =>
                     </div>
                   ))}
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col text-left">
                   <div className="flex items-center gap-2">
                     <span className="flex h-2 w-2 relative">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -286,7 +441,7 @@ export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () =>
           </motion.div>
         </div>
 
-        {/* Interactive Prompt Panel */}
+        {/* Right Visual Panel: Reality Comparison */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -294,83 +449,7 @@ export const Hero = ({ onOpenWaitlist, onOpenCheckout }: { onOpenWaitlist: () =>
           className="relative group"
         >
           <div className="absolute -inset-1 bg-gradient-to-r from-[#F0B429]/20 to-transparent blur-xl opacity-50 group-hover:opacity-75 transition duration-1000"></div>
-          <div className="relative bg-[#05070A] border border-[#1A2333] rounded-xl overflow-hidden shadow-2xl shadow-[#F0B429]/5">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#1A2333] bg-[#0D1521]">
-              <div className="flex gap-4">
-                {(Object.keys(prompts) as Array<keyof typeof prompts>).map(tab => (
-                  <button 
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`text-[10px] font-['JetBrains_Mono'] uppercase tracking-widest transition-colors ${activeTab === tab ? 'text-[#F0B429]' : 'text-[#4A5568] hover:text-white'}`}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-              <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]"></div>
-              </div>
-            </div>
-            <div className="p-6 text-left font-['JetBrains_Mono'] text-sm leading-relaxed min-h-[320px] flex flex-col">
-              <div className="flex gap-3 mb-6">
-                <span className="text-[#F0B429]">❯</span>
-                <span className="text-white">
-                  {prompts[activeTab].text}
-                  <span className="inline-block w-2 h-4 bg-[#F0B429] ml-1 animate-pulse align-middle"></span>
-                </span>
-              </div>
-              <div className="space-y-2 text-[12px] flex-1">
-                <AnimatePresence mode="popLayout">
-                  {displayedLogs.map((log, idx) => (
-                    <motion.div 
-                      key={idx}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="text-[#4A5568]"
-                    >
-                      {log === "NEXUS Chat ›" ? (
-                        <span className="text-[#F0B429] font-bold">{log}</span>
-                      ) : (typeof log === 'string' && log.startsWith("You:")) ? (
-                        <span className="text-white"><span className="text-[#F0B429]">You:</span> {log.replace("You:", "")}</span>
-                      ) : (typeof log === 'string' && log.startsWith("NEXUS:")) ? (
-                        <span className="text-[#7A8BA0]"><span className="text-[#F0B429]">NEXUS:</span> {log.replace("NEXUS:", "")}</span>
-                      ) : (typeof log === 'string' && (log.includes('✓') || log.includes('PASSED') || log.includes('CERTIFIED'))) ? (
-                        <span className="text-[#27C93F]">{log}</span>
-                      ) : (typeof log === 'string' && (log.includes('✗') || log.includes('FAIL') || log.includes('Kill') || log.includes('died'))) ? (
-                        <span className="text-red-500">{log}</span>
-                      ) : (typeof log === 'string' && (log.includes('[ATLAS]') || log.includes('[ECHO]') || log.includes('[DELTA]') || log.includes('[SYNTH]'))) ? (
-                        <>
-                          {log.split(' ').map((word, i) => 
-                            ['[ATLAS]', '[ECHO]', '[DELTA]', '[SYNTH]'].includes(word) ? 
-                            <span key={i} className="text-[#F0B429]">{word} </span> : 
-                            word + ' '
-                          )}
-                        </>
-                      ) : (typeof log === 'string' && log.endsWith(':')) ? (
-                        <span className="text-[#F0B429] font-bold">{log}</span>
-                      ) : log}
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-                {!isTyping && displayedLogs.length > 0 && (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="mt-6 text-[#27C93F] font-bold"
-                  >
-                    STRATEGY CERTIFIED ✓ — Deployment Ready
-                  </motion.div>
-                )}
-              </div>
-              <div className="mt-auto pt-4 flex justify-end">
-                <div className="bg-[#F0B429]/10 border border-[#F0B429]/20 px-3 py-1 rounded text-[10px] text-[#F0B429] font-bold tracking-widest uppercase">
-                  Validated in 2m 47s
-                </div>
-              </div>
-            </div>
-          </div>
+          <RealityComparison />
         </motion.div>
       </div>
 
