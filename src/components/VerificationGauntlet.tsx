@@ -102,13 +102,13 @@ export const VerificationGauntlet = ({ onOpenWaitlist }: { onOpenWaitlist?: () =
             <div className="text-[10px] font-black text-[#4A5568] uppercase tracking-[0.3em]">LIVE VERIFICATION FEED</div>
             <div className="flex gap-8">
               <div className="text-center">
-                <div className="text-2xl font-black text-white">1.04M</div>
-                <div className="text-[9px] text-[#4A5568] uppercase font-bold">Simulations / Hour</div>
+                <div className="text-2xl font-black text-white">ACTIVE</div>
+                <div className="text-[9px] text-[#4A5568] uppercase font-bold">Audit Trail Ledger</div>
               </div>
               <div className="w-px h-10 bg-[#1A2333]" />
               <div className="text-center">
-                <div className="text-2xl font-black text-red-500">92.4%</div>
-                <div className="text-[9px] text-[#4A5568] uppercase font-bold">Gauntlet Fail Rate</div>
+                <div className="text-2xl font-black text-[#F0B429]">STRICT</div>
+                <div className="text-[9px] text-[#4A5568] uppercase font-bold">Verification Engine</div>
               </div>
             </div>
           </div>
@@ -545,7 +545,7 @@ export const VerificationGauntlet = ({ onOpenWaitlist }: { onOpenWaitlist?: () =
                   </div>
                   <div className="flex flex-col gap-2">
                      <div className="px-5 py-2 rounded-full border-2 border-green-500 bg-green-50 text-green-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                       <CheckCircle2 className="w-4 h-4" /> Fund Grade
+                       <CheckCircle2 className="w-4 h-4" /> Evidence Pack
                      </div>
                      <div className="px-5 py-2 rounded-full border border-black/10 text-gray-600 text-[10px] font-black uppercase tracking-widest flex items-center justify-center">
                        High Conviction
@@ -588,12 +588,12 @@ export const VerificationGauntlet = ({ onOpenWaitlist }: { onOpenWaitlist?: () =
                 <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/10 blur-[80px] rounded-full pointer-events-none" />
                 
                 <div className="flex flex-col h-full gap-10">
-                  <div className="flex justify-between items-start">
-                    <h5 className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em]">Strategy Performance Profile</h5>
-                    <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[#F0B429] text-[10px] font-black uppercase tracking-widest">
-                      Certified Alpha
+                    <div className="flex justify-between items-start">
+                      <h5 className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em]">Strategy Performance Profile</h5>
+                      <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[#F0B429] text-[10px] font-black uppercase tracking-widest">
+                        Verified Logic
+                      </div>
                     </div>
-                  </div>
                   
                   <div className="flex-1 min-h-[300px] flex items-center justify-center">
                     <ResponsiveContainer width="100%" height={320}>
@@ -638,9 +638,9 @@ export const VerificationGauntlet = ({ onOpenWaitlist }: { onOpenWaitlist?: () =
                         <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center p-2 shadow-xl shrink-0">
                            {/* Small circular badge mockup */}
                            <div className="w-full h-full border-2 border-black rounded-full flex flex-col items-center justify-center">
-                              <span className="text-[6px] font-black leading-none">ALPHA</span>
+                              <span className="text-[6px] font-black leading-none uppercase">Logic</span>
                               <span className="text-[12px] font-black">94</span>
-                              <span className="text-[4px] font-black">CERTIFIED</span>
+                              <span className="text-[4px] font-black uppercase">Verified</span>
                            </div>
                         </div>
                         <p className="text-[11px] text-[#7A8BA0] font-medium leading-relaxed max-w-[180px]">
